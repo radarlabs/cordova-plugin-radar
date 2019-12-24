@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
+           id="cordova-plugin-radar"
+           version="1.0.0">
+    <name>Radar</name>
+    <js-module src="www/Radar.js" name="Radar">
+        <clobbers target="Radar"/>
+        <clobbers target="window.plugins.Radar"/>
+    </js-module>
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="Radar">
+                <param name="android-package" value="io.radar.cordova.RadarCordovaPlugin"/>
+            </feature>
+        </config-file>
+        <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java" target-dir="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java"/>
+        <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaUtils.java" target-dir="src/android/src/main/java/io/radar/cordova/RadarCordovaUtils.java"/>
+        <framework src="io.radar:sdk:2.1.+"/>
+    </platform>
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="Radar">
+                <param name="ios-package" value="CDVRadar"/>
+            </feature>
+        </config-file>
+        <header-file src="src/ios/CDVRadar.h"/>
+        <header-file src="src/ios/CDVRadarUtils.h"/>
+        <source-file src="src/ios/CDVRadar.m"/>
+        <source-file src="src/ios/CDVRadarUtils.m"/>
+        <framework src="RadarSDK" type="podspec" spec="~> 2.1.0"/>
+    </platform>
+</plugin>
