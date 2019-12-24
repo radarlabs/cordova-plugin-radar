@@ -1,9 +1,12 @@
 package io.radar.cordova;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -25,32 +28,33 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     private static CallbackContext errorCallbackContext;
 
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        if (action.equals("setUserId"))
+        if (action.equals("setUserId")) {
             setUserId(args, callbackContext);
-        else if (action.equals("setDescription"))
+        } else if (action.equals("setDescription")) {
             setDescription(args, callbackContext);
-        else if (action.equals("getPermissionsStatus"))
+        } else if (action.equals("getPermissionsStatus")) {
             getPermissionsStatus(args, callbackContext);
-        else if (action.equals("requestPermissions"))
+        } else if (action.equals("requestPermissions")) {
             requestPermissions(args, callbackContext);
-        else if (action.equals("startTracking"))
+        } else if (action.equals("startTracking")) {
             startTracking(args, callbackContext);
-        else if (action.equals("stopTracking"))
+        } else if (action.equals("stopTracking")) {
             stopTracking(args, callbackContext);
-        else if (action.equals("trackOnce"))
+        } else if (action.equals("trackOnce")) {
             trackOnce(args, callbackContext);
-        else if (action.equals("updateLocation"))
+        } else if (action.equals("updateLocation")) {
             updateLocation(args, callbackContext);
-        else if (action.equals("onEvents"))
+        } else if (action.equals("onEvents")) {
             onEvents(args, callbackContext);
-        else if (action.equals("onError"))
+        } else if (action.equals("onError")) {
             onError(args, callbackContext);
-        else if (action.equals("offEvents"))
+        } else if (action.equals("offEvents")) {
             offEvents(args, callbackContext);
-        else if (action.equals("offError"))
+        } else if (action.equals("offError")) {
             offError(args, callbackContext);
-        else
+        } else {
             return false;
+        }
 
         return true;
     }
@@ -72,7 +76,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     }
 
     public void getPermissionsStatus(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        boolean hasPermissions = Radar.checkSelfPermissions();
+        boolean hasPermissions = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
         String str = RadarCordovaUtils.stringForPermissionsStatus(hasPermissions);
 
@@ -80,7 +84,10 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     }
 
     public void requestPermissions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Radar.requestPermissions(this.cordova.getActivity());
+        Activity activity = getCurrentActivity();
+        if (activity != null) {
+            ActivityCompat.requestPermissions(activity, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, 0);
+        }
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
@@ -104,12 +111,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
               try {
                   JSONObject obj = new JSONObject();
                   obj.put("status", RadarCordovaUtils.stringForStatus(status));
-                  if (location != null)
+                  if (location != null) {
                       obj.put("location", RadarCordovaUtils.jsonObjectForLocation(location));
-                  if (events != null)
+                  }
+                  if (events != null) {
                       obj.put("events", RadarCordovaUtils.jsonArrayForEvents(events));
-                  if (user != null)
+                  }
+                  if (user != null) {
                       obj.put("user", RadarCordovaUtils.jsonObjectForUser(user));
+                  }
 
                   callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
               } catch (JSONException e) {
