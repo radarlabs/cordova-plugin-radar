@@ -175,4 +175,4 @@ cordova.plugins.radar.updateLocation(location).then((result) => {
 
 ## Support
 
-Have questions? We're here to help! Email us at [support@onradar.com](mailto:support@onradar.com).
+Have questions? We're here to help! Email us at [support@radar.io](mailto:support@radar.io).
