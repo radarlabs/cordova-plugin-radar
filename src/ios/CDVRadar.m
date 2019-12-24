@@ -128,7 +128,7 @@ NSString *errorCallbackId;
       double longitude = [longitudeNumber doubleValue];
       double accuracy = accuracyNumber ? [accuracyNumber doubleValue] : -1;
 
-      CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:nil];
+      CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:[NSDate date]];
 
       [Radar updateLocation:location withCompletionHandler:^(RadarStatus status, CLLocation *location, NSArray<RadarEvent *> *events, RadarUser *user) {
           NSMutableDictionary *dict = [NSMutableDictionary new];

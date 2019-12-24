@@ -23,8 +23,6 @@
             return @"SUCCESS";
         case RadarStatusErrorPublishableKey:
             return @"ERROR_PUBLISHABLE_KEY";
-        case RadarStatusErrorUserId:
-            return @"ERROR_USER_ID";
         case RadarStatusErrorPermissions:
             return @"ERROR_PERMISSIONS";
         case RadarStatusErrorLocation:
@@ -68,8 +66,8 @@
             return @"user.exited_region_state";
         case RadarEventTypeUserEnteredRegionDMA:
             return @"user.entered_region_dma";
-        case RadarEventTypeUserExiteddRegionCountry:
-            return @"user.exited_region_country";
+        case RadarEventTypeUserExitedRegionDMA:
+            return @"user.exited_region_dma";
         default:
             return nil;
 
