@@ -38,14 +38,6 @@ Radar.initialize(publishableKey);
 
 ## Usage
 
-### Import module
-
-First, import the module:
-
-```js
-import Radar from 'react-native-radar';
-```
-
 ### Identify user
 
 Before tracking the user's location, you must identify the user to Radar. To identify the user, call:
