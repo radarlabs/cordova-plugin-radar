@@ -1,8 +1,8 @@
 ![Radar](https://raw.githubusercontent.com/radarlabs/cordova-plugin-radar/master/logo.png)
 
-[![npm version](https://badge.fury.io/js/cordova-plugin-radar.svg)](https://badge.fury.io/js/cordova-plugin-radar)
+[![npm version](https://badge.fury.io/js/@radarlabs/cordova-plugin-radar.svg)](https://badge.fury.io/js/@radarlabs/cordova-plugin-radar)
 
-[Radar](https://www.onradar.com) is the location platform for mobile apps.
+[Radar](https://radar.io) is the location platform for mobile apps.
 
 ## Installation
 
