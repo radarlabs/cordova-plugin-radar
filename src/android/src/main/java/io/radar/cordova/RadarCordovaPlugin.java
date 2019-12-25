@@ -1,12 +1,9 @@
 package io.radar.cordova;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -18,7 +15,7 @@ import org.json.JSONObject;
 
 import io.radar.sdk.Radar;
 import io.radar.sdk.RadarReceiver;
-import io.radar.sdk.RadarCallback;
+import io.radar.sdk.Radar.RadarCallback;
 import io.radar.sdk.model.RadarEvent;
 import io.radar.sdk.model.RadarUser;
 
@@ -76,7 +73,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     }
 
     public void getPermissionsStatus(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        boolean hasPermissions = ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean hasPermissions = cordova.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
 
         String str = RadarCordovaUtils.stringForPermissionsStatus(hasPermissions);
 
@@ -84,10 +81,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     }
 
     public void requestPermissions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Activity activity = getCurrentActivity();
-        if (activity != null) {
-            ActivityCompat.requestPermissions(activity, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, 0);
-        }
+        cordova.requestPermission(this, 0, Manifest.permission.ACCESS_FINE_LOCATION);
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
@@ -107,7 +101,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void trackOnce(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
       Radar.trackOnce(new RadarCallback() {
           @Override
-          public void onCallback(Radar.RadarStatus status, Location location, RadarEvent[] events, RadarUser user) {
+          public void onComplete(Radar.RadarStatus status, Location location, RadarEvent[] events, RadarUser user) {
               try {
                   JSONObject obj = new JSONObject();
                   obj.put("status", RadarCordovaUtils.stringForStatus(status));
@@ -143,7 +137,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
         Radar.updateLocation(location, new RadarCallback() {
             @Override
-            public void onCallback(Radar.RadarStatus status, Location location, RadarEvent[] events, RadarUser user) {
+            public void onComplete(Radar.RadarStatus status, Location location, RadarEvent[] events, RadarUser user) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", RadarCordovaUtils.stringForStatus(status));

@@ -5,11 +5,7 @@
   "license": "Apache-2.0",
   "version": "0.0.1",
   "main": "www/Radar.js",
-  "dependencies": {
-    "cordova": "^6.5.0"
-  },
   "devDependencies": {
-    "@angular/core": "^2.4.8",
     "babel-eslint": "^7.1.1",
     "eslint": "^3.14.0",
     "eslint-config-airbnb": "^14.0.0",

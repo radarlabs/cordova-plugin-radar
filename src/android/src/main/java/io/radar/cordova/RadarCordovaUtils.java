@@ -53,9 +53,9 @@ class RadarCordovaUtils {
                 return "user.entered_region_state";
             case USER_EXITED_REGION_STATE:
                 return "user.exited_region_state";
-            case USER_ENTERED_REGION_STATE:
+            case USER_ENTERED_REGION_DMA:
                 return "user.entered_region_dma";
-            case USER_EXITED_REGION_STATE:
+            case USER_EXITED_REGION_DMA:
                 return "user.exited_region_dma";
             default:
                 return null;
