@@ -4,8 +4,7 @@
            version="1.0.0">
     <name>Radar</name>
     <js-module src="www/Radar.js" name="Radar">
-        <clobbers target="Radar"/>
-        <clobbers target="window.plugins.Radar"/>
+        <clobbers target="cordova.plugins.radar"/>
     </js-module>
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
