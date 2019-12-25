@@ -12,8 +12,6 @@ Install the Cordova plugin:
 $ cordova plugin install cordova-plugin-radar
 ```
 
-The Cordova plugin installs the Radar SDK using CocoaPods.
-
 Before writing any JavaScript, you must integrate the Radar SDK with your iOS and Android apps by following the *Configure project* and *Add SDK to project* steps in the [SDK documentation](https://radar.io/documentation/sdk).
 
 On iOS, you must add location usage descriptions and background modes to your `Info.plist`. Initialize the SDK in `application:didFinishLaunchingWithOptions:` in `AppDelegate.m`, passing in your publishable API key.
