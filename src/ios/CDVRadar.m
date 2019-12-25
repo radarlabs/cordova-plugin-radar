@@ -3,10 +3,9 @@
 
 @implementation CDVRadar {
     CLLocationManager *locationManager;
+    NSString *eventsCallbackId;
+    NSString *errorCallbackId;
 }
-
-NSString *eventsCallbackId;
-NSString *errorCallbackId;
 
 - (instancetype)init {
     self = [super init];
@@ -18,8 +17,9 @@ NSString *errorCallbackId;
 }
 
 - (void)didReceiveEvents:(NSArray<RadarEvent *> *)events user:(RadarUser *)user {
-    if (!eventsCallbackId)
+    if (!eventsCallbackId) {
         return;
+    }
 
     NSDictionary *dict = @{@"events": [CDVRadarUtils arrayForEvents:events], @"user": [CDVRadarUtils dictionaryForUser: user]};
 
@@ -29,8 +29,9 @@ NSString *errorCallbackId;
 }
 
 - (void)didFailWithStatus:(RadarStatus)status {
-  if (!errorCallbackId)
+  if (!errorCallbackId) {
       return;
+  }
 
   NSDictionary *dict = @{@"status": [CDVRadarUtils stringForStatus:status]};
 
@@ -97,55 +98,55 @@ NSString *errorCallbackId;
 
 - (void)trackOnce:(CDVInvokedUrlCommand *)command {
     [self.commandDelegate runInBackground:^{
-      [Radar trackOnceWithCompletionHandler:^(RadarStatus status, CLLocation *location, NSArray<RadarEvent *> *events, RadarUser *user) {
-          NSMutableDictionary *dict = [NSMutableDictionary new];
-          [dict setObject:[CDVRadarUtils stringForStatus:status] forKey:@"status"];
-          if (location) {
-              [dict setObject:[CDVRadarUtils dictionaryForLocation:location] forKey:@"location"];
-          }
-          if (events) {
-              [dict setObject:[CDVRadarUtils arrayForEvents:events] forKey:@"events"];
-          }
-          if (user) {
-              [dict setObject:[CDVRadarUtils dictionaryForUser:user] forKey:@"user"];
-          }
+        [Radar trackOnceWithCompletionHandler:^(RadarStatus status, CLLocation *location, NSArray<RadarEvent *> *events, RadarUser *user) {
+            NSMutableDictionary *dict = [NSMutableDictionary new];
+            [dict setObject:[CDVRadarUtils stringForStatus:status] forKey:@"status"];
+            if (location) {
+                [dict setObject:[CDVRadarUtils dictionaryForLocation:location] forKey:@"location"];
+            }
+            if (events) {
+                [dict setObject:[CDVRadarUtils arrayForEvents:events] forKey:@"events"];
+            }
+            if (user) {
+                [dict setObject:[CDVRadarUtils dictionaryForUser:user] forKey:@"user"];
+            }
 
-          CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
-          [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-      }];
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }];
     }];
 }
 
 - (void)updateLocation:(CDVInvokedUrlCommand *)command {
     [self.commandDelegate runInBackground:^{
-      NSDictionary *locationDict = [command.arguments objectAtIndex:0];
+        NSDictionary *locationDict = [command.arguments objectAtIndex:0];
 
-      NSNumber *latitudeNumber = [locationDict objectForKey:@"latitude"];
-      NSNumber *longitudeNumber = [locationDict objectForKey:@"longitude"];
-      NSNumber *accuracyNumber = [locationDict objectForKey:@"accuracy"];
+        NSNumber *latitudeNumber = [locationDict objectForKey:@"latitude"];
+        NSNumber *longitudeNumber = [locationDict objectForKey:@"longitude"];
+        NSNumber *accuracyNumber = [locationDict objectForKey:@"accuracy"];
 
-      double latitude = [latitudeNumber doubleValue];
-      double longitude = [longitudeNumber doubleValue];
-      double accuracy = accuracyNumber ? [accuracyNumber doubleValue] : -1;
+        double latitude = [latitudeNumber doubleValue];
+        double longitude = [longitudeNumber doubleValue];
+        double accuracy = accuracyNumber ? [accuracyNumber doubleValue] : -1;
 
-      CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:[NSDate date]];
+        CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:[NSDate date]];
 
-      [Radar updateLocation:location withCompletionHandler:^(RadarStatus status, CLLocation *location, NSArray<RadarEvent *> *events, RadarUser *user) {
-          NSMutableDictionary *dict = [NSMutableDictionary new];
-          [dict setObject:[CDVRadarUtils stringForStatus:status] forKey:@"status"];
-          if (location) {
-              [dict setObject:[CDVRadarUtils dictionaryForLocation:location] forKey:@"location"];
-          }
-          if (events) {
-              [dict setObject:[CDVRadarUtils arrayForEvents:events] forKey:@"events"];
-          }
-          if (user) {
-              [dict setObject:[CDVRadarUtils dictionaryForUser:user] forKey:@"user"];
-          }
+        [Radar updateLocation:location withCompletionHandler:^(RadarStatus status, CLLocation *location, NSArray<RadarEvent *> *events, RadarUser *user) {
+            NSMutableDictionary *dict = [NSMutableDictionary new];
+            [dict setObject:[CDVRadarUtils stringForStatus:status] forKey:@"status"];
+            if (location) {
+                [dict setObject:[CDVRadarUtils dictionaryForLocation:location] forKey:@"location"];
+            }
+            if (events) {
+                [dict setObject:[CDVRadarUtils arrayForEvents:events] forKey:@"events"];
+            }
+            if (user) {
+                [dict setObject:[CDVRadarUtils dictionaryForUser:user] forKey:@"user"];
+            }
 
-          CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
-          [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-      }];
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }];
     }];
 }
 

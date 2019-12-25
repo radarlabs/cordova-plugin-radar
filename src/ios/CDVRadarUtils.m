@@ -227,15 +227,17 @@
     [dict setValue:event._id forKey:@"_id"];
     [dict setValue:@(event.live) forKey:@"live"];
     NSString *type = [CDVRadarUtils stringForEventType:event.type];
-    if (type)
+    if (type) {
         [dict setValue:type forKey:@"type"];
+    }
     NSDictionary *geofenceDict = [CDVRadarUtils dictionaryForGeofence:event.geofence];
-    if (geofenceDict)
+    if (geofenceDict) {
         [dict setValue:geofenceDict forKey:@"geofence"];
+    }
     NSNumber *confidence = [CDVRadarUtils numberForEventConfidence:event.confidence];
     [dict setValue:confidence forKey:@"confidence"];
     if (event.duration) {
-      [dict setValue:@(event.duration) forKey:@"duration"];
+        [dict setValue:@(event.duration) forKey:@"duration"];
     }
     return dict;
 }
@@ -249,7 +251,7 @@
     [dict setValue:@(location.coordinate.latitude) forKey:@"latitude"];
     [dict setValue:@(location.coordinate.longitude) forKey:@"longitude"];
     if (location.horizontalAccuracy) {
-      [dict setValue:@(location.horizontalAccuracy) forKey:@"accuracy"];
+        [dict setValue:@(location.horizontalAccuracy) forKey:@"accuracy"];
     }
     return dict;
 }
