@@ -12,11 +12,11 @@ Install the Cordova plugin:
 $ cordova plugin install cordova-plugin-radar
 ```
 
-The Cordova plugin installs the Radar SDK using CocoaPods, which requires Cordova iOS platform version 4.3.0 or higher.
+The Cordova plugin installs the Radar SDK using CocoaPods.
 
 Before writing any JavaScript, you must integrate the Radar SDK with your iOS and Android apps by following the *Configure project* and *Add SDK to project* steps in the [SDK documentation](https://radar.io/documentation/sdk).
 
-On iOS, you must add location usage descriptions and background modes to your `Info.plist`, then add the SDK to your project, preferably using CocoaPods. Finally, initialize the SDK in `application:didFinishLaunchingWithOptions:` in `AppDelegate.m`, passing in your publishable API key.
+On iOS, you must add location usage descriptions and background modes to your `Info.plist`. Initialize the SDK in `application:didFinishLaunchingWithOptions:` in `AppDelegate.m`, passing in your publishable API key.
 
 ```objc
 #import <RadarSDK/RadarSDK.h>
@@ -26,7 +26,7 @@ On iOS, you must add location usage descriptions and background modes to your `I
 [Radar initializeWithPublishableKey:publishableKey];
 ```
 
-On Android, you must add the Google Play Services library to your project, then add the SDK to your project, preferably using Gradle. Finally, initialize the SDK in `onCreate()` in `MainApplication.java`, passing in your publishable API key:
+On Android, you must add the Google Play Services library to your project. Initialize the SDK in `onCreate()` in `MainApplication.java`, passing in your publishable API key:
 
 ```java
 import io.radar.sdk.Radar;
@@ -40,13 +40,17 @@ Radar.initialize(publishableKey);
 
 ### Identify user
 
-Before tracking the user's location, you must identify the user to Radar. To identify the user, call:
+Until you identify the user, Radar will automatically identify the user by device ID.
+
+To identify the user when logged in, call:
 
 ```js
 cordova.plugins.radar.setUserId(userId);
 ```
 
 where `userId` is a stable unique ID string for the user.
+
+Do not send any PII, like names, email addresses, or publicly available IDs, for `userId`. See [privacy best practices](https://help.radar.io/privacy/what-are-privacy-best-practices-for-radar) for more information.
 
 To set an optional description for the user, displayed in the dashboard, call:
 
@@ -119,6 +123,8 @@ To start tracking the user's location in the background, call:
 cordova.plugins.radar.startTracking();
 ```
 
+Assuming you have configured your project properly, the SDK will wake up while the user is moving (usually every 3-5 minutes), then shut down when the user stops (usually within 5-10 minutes). To save battery, the SDK will not wake up when stopped, and the user must move at least 100 meters from a stop (sometimes more) to wake up the SDK. **Note that location updates may be delayed significantly by iOS [Low Power Mode](https://support.apple.com/en-us/HT205234), by Android [Doze Mode and App Standby](https://developer.android.com/training/monitoring-device-state/doze-standby.html) and [Background Location Limits](https://developer.android.com/about/versions/oreo/background-location-limits.html), or if the device has connectivity issues, low battery, or wi-fi disabled. These constraints apply to all uses of background location services on iOS and Android, not just Radar. See more about [accuracy and reliability](https://radar.io/documentation/sdk#accuracy).**
+
 To stop tracking the user's location in the background (e.g., when the user logs out), call:
 
 ```js
@@ -139,7 +145,7 @@ cordova.plugins.radar.onError((err) => {
 });
 ```
 
-You should remove event listeners when you are done with them (e.g., in `componentWillUnmount`):
+You should remove event listeners when you are done with them:
 
 ```js
 cordova.plugins.radar.offEvents();
@@ -164,7 +170,3 @@ cordova.plugins.radar.updateLocation(location).then((result) => {
   // optionally, do something with err
 });
 ```
-
-## Support
-
-Have questions? We're here to help! Email us at [support@radar.io](mailto:support@radar.io).
