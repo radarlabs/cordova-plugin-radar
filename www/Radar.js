@@ -2,8 +2,8 @@ const cordova = require('cordova');
 
 const exec = (action, args, callback) => {
   cordova.exec(callback,
-    (error) => {
-      console.log(error);
+    (err) => {
+      console.log(err);
     }, 'Radar', action, args);
 };
 

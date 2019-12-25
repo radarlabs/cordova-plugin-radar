@@ -147,12 +147,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", RadarCordovaUtils.stringForStatus(status));
-                    if (location != null)
+                    if (location != null) {
                         obj.put("location", RadarCordovaUtils.jsonObjectForLocation(location));
-                    if (events != null)
+                    }
+                    if (events != null) {
                         obj.put("events", RadarCordovaUtils.jsonArrayForEvents(events));
-                    if (user != null)
+                    }
+                    if (user != null) {
                         obj.put("user", RadarCordovaUtils.jsonObjectForUser(user));
+                    }
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
