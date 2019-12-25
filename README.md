@@ -9,7 +9,7 @@
 Install the Cordova plugin:
 
 ```bash
-$ cordova plugin install cordova-plugin-radar
+$ cordova plugin install @radarlabs/cordova-plugin-radar
 ```
 
 Before writing any JavaScript, you must integrate the Radar SDK with your iOS and Android apps by following the *Configure project* and *Add SDK to project* steps in the [SDK documentation](https://radar.io/documentation/sdk).
