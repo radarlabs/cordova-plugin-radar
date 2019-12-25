@@ -1,6 +1,6 @@
 ![Radar](https://raw.githubusercontent.com/radarlabs/cordova-plugin-radar/master/logo.png)
 
-[![npm version](https://badge.fury.io/js/@radarlabs/cordova-plugin-radar.svg)](https://badge.fury.io/js/@radarlabs/cordova-plugin-radar)
+[![npm version](https://badge.fury.io/js/%40radarlabs%2Fcordova-plugin-radar.svg)](https://badge.fury.io/js/%40radarlabs%2Fcordova-plugin-radar.svg)
 
 [Radar](https://radar.io) is the location platform for mobile apps.
 
