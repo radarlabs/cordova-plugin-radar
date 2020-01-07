@@ -67,7 +67,7 @@ Before tracking the user's location, the user must have granted location permiss
 To determine the whether user has granted location permissions for the app, call:
 
 ```js
-cordova.plugins.radar.getPermissionsStatus().then((status) => {
+cordova.plugins.radar.getPermissionsStatus((status) => {
   // do something with status
 });
 ```
@@ -93,10 +93,8 @@ Once you have initialized the SDK, you have identified the user, and the user ha
 To track the user's location in the foreground, call:
 
 ```js
-cordova.plugins.radar.trackOnce().then((result) => {
-  // do something with result.location, result.events, result.user.geofences
-}).catch((err) => {
-  // optionally, do something with err
+cordova.plugins.radar.trackOnce((result) => {
+  // do something with result.status, result.location, result.events, result.user
 });
 ```
 
@@ -162,9 +160,7 @@ const location = {
   accuracy: 65
 };
 
-cordova.plugins.radar.updateLocation(location).then((result) => {
-  // do something with result.events, result.user.geofences
-}).catch((err) => {
-  // optionally, do something with err
+cordova.plugins.radar.updateLocation(location, (result) => {
+  // do something with result.status, result.events, result.user
 });
 ```
