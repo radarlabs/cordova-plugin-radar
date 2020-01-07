@@ -101,7 +101,6 @@ cordova.plugins.radar.trackOnce((result) => {
 `err` will be a string, one of:
 
 - `ERROR_PUBLISHABLE_KEY`: the SDK was not initialized
-- `ERROR_USER_ID`: the user was not identified
 - `ERROR_PERMISSIONS`: the user has not granted location permissions for the app
 - `ERROR_LOCATION`: location services were unavailable, or the location request timed out
 - `ERROR_NETWORK`: the network was unavailable, or the network connection timed out
