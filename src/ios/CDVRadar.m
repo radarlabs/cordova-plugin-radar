@@ -20,7 +20,7 @@
         return;
     }
 
-    NSDictionary *dict = @{@"events": [CDVRadarUtils arrayForEvents:events], @"user": [CDVRadarUtils dictionaryForUser: user]};
+    NSDictionary *dict = @{@"events": [RadarEvent arrayForEvents:events], @"user": [user dictionaryValue]};
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
     [pluginResult setKeepCallbackAsBool:YES];
@@ -32,7 +32,7 @@
       return;
   }
 
-  NSDictionary *dict = @{@"status": [CDVRadarUtils stringForStatus:status]};
+  NSDictionary *dict = @{@"status": [Radar stringForStatus:status]};
 
   CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
   [pluginResult setKeepCallbackAsBool:YES];
@@ -124,7 +124,7 @@
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         };
-        
+
         if (command.arguments && command.arguments.count) {
             NSDictionary *locationDict = [command.arguments objectAtIndex:0];
             NSNumber *latitudeNumber = locationDict[@"latitude"];
@@ -134,7 +134,7 @@
             double longitude = [longitudeNumber doubleValue];
             double accuracy = accuracyNumber ? [accuracyNumber doubleValue] : -1;
             CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:[NSDate date]];
-            
+
             [Radar trackOnceWithLocation:location completionHandler:completionHandler];
         } else {
             [Radar trackOnceWithCompletionHandler:completionHandler];
@@ -201,7 +201,7 @@
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         };
-        
+
         if (command.arguments && command.arguments.count) {
             NSDictionary *locationDict = [command.arguments objectAtIndex:0];
             NSNumber *latitudeNumber = locationDict[@"latitude"];
@@ -209,7 +209,7 @@
             double latitude = [latitudeNumber doubleValue];
             double longitude = [longitudeNumber doubleValue];
             CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
-            
+
             [Radar getContextForLocation:location completionHandler:completionHandler];
         } else {
             [Radar getContextWithCompletionHandler:completionHandler];
@@ -232,9 +232,9 @@
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         };
-        
+
         NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
-        
+
         CLLocation *near;
         NSDictionary *nearDict = optionsDict[@"near"];
         if (nearDict) {
@@ -285,9 +285,9 @@
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         };
-        
+
         NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
-        
+
         CLLocation *near;
         NSDictionary *nearDict = optionsDict[@"near"];
         if (nearDict) {
@@ -336,9 +336,9 @@
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         };
-        
+
         NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
-        
+
         CLLocation *near;
         NSDictionary *nearDict = optionsDict[@"near"];
         if (nearDict) {
@@ -375,7 +375,7 @@
 - (void)autocomplete:(CDVInvokedUrlCommand *)command {
     [self.commandDelegate runInBackground:^{
         NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
-        
+
         NSString *query = optionsDict[@"query"];
         CLLocation *near;
         NSDictionary *nearDict = optionsDict[@"near"];
@@ -413,7 +413,7 @@
 - (void)geocode:(CDVInvokedUrlCommand *)command {
     [self.commandDelegate runInBackground:^{
         NSString *query = [command.arguments objectAtIndex:0];
-        
+
         [Radar geocodeAddress:query completionHandler:^(RadarStatus status, NSArray<RadarAddress *> * _Nullable addresses) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
@@ -445,7 +445,7 @@
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         };
-        
+
         if (command.arguments && command.arguments.count) {
             NSDictionary *locationDict = [command.arguments objectAtIndex:0];
             NSNumber *latitudeNumber = locationDict[@"latitude"];
@@ -453,7 +453,7 @@
             double latitude = [latitudeNumber doubleValue];
             double longitude = [longitudeNumber doubleValue];
             CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
-            
+
             [Radar reverseGeocode:location completionHandler:completionHandler];
         } else {
             [Radar reverseGeocodeWithCompletionHandler:completionHandler];
@@ -491,9 +491,9 @@
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         };
-        
+
         NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
-        
+
         CLLocation *origin;
         NSDictionary *originDict = optionsDict[@"origin"];
         if (originDict) {
@@ -531,7 +531,7 @@
         } else {
             units = RadarRouteUnitsImperial;
         }
-        
+
         if (origin) {
             [Radar getDistanceFromOrigin:origin destination:destination modes:modes units:units completionHandler:completionHandler];
         } else {
