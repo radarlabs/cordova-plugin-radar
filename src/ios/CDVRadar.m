@@ -3,6 +3,8 @@
 @implementation CDVRadar {
     CLLocationManager *locationManager;
     NSString *eventsCallbackId;
+    NSString *locationCallbackId;
+    NSString *clientLocationCallbackId;
     NSString *errorCallbackId;
 }
 
@@ -27,16 +29,39 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:eventsCallbackId];
 }
 
+- (void)didUpdateLocation:(CLLocation *)location user:(RadarUser *)user {
+    if (!locationCallbackId) {
+        return;
+    }
+
+    NSDictionary *dict = @{@"location": [Radar dictionaryForLocation:location], @"user": [user dictionaryValue]};
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+    [pluginResult setKeepCallbackAsBool:YES];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:locationCallbackId];
+}
+
+- (void)didUpdateClientLocation:(CLLocation *)location stopped:(BOOL)stopped source:(RadarLocationSource)source {
+    if (!clientLocationCallbackId) {
+        return;
+    }
+
+    NSDictionary *dict = @{@"location": [Radar dictionaryForLocation:location], @"stopped": @(stopped), @"source": [Radar stringForSource:source]};
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+    [pluginResult setKeepCallbackAsBool:YES];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:clientLocationCallbackId];
+}
 - (void)didFailWithStatus:(RadarStatus)status {
-  if (!errorCallbackId) {
-      return;
-  }
+    if (!errorCallbackId) {
+        return;
+    }
 
-  NSDictionary *dict = @{@"status": [Radar stringForStatus:status]};
+    NSDictionary *dict = @{@"status": [Radar stringForStatus:status]};
 
-  CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
-  [pluginResult setKeepCallbackAsBool:YES];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:errorCallbackId];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+    [pluginResult setKeepCallbackAsBool:YES];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:errorCallbackId];
 }
 
 - (void)setUserId:(CDVInvokedUrlCommand *)command {
@@ -174,12 +199,28 @@
     eventsCallbackId = command.callbackId;
 }
 
+- (void)onLocation:(CDVInvokedUrlCommand *)command {
+    locationCallbackId = command.callbackId;
+}
+
+- (void)onClientLocation:(CDVInvokedUrlCommand *)command {
+    clientLocationCallbackId = command.callbackId;
+}
+
 - (void)onError:(CDVInvokedUrlCommand *)command {
     errorCallbackId = command.callbackId;
 }
 
 - (void)offEvents:(CDVInvokedUrlCommand *)command {
     eventsCallbackId = nil;
+}
+
+- (void)offLocation:(CDVInvokedUrlCommand *)command {
+    locationCallbackId = nil;
+}
+
+- (void)offClientLocation:(CDVInvokedUrlCommand *)command {
+    clientLocationCallbackId = nil;
 }
 
 - (void)offError:(CDVInvokedUrlCommand *)command {
@@ -397,9 +438,6 @@
         [Radar autocompleteQuery:query near:near limit:limit completionHandler:^(RadarStatus status, NSArray<RadarAddress *> * _Nullable addresses) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
-            if (location) {
-                [dict setObject:[Radar dictionaryForLocation:location] forKey:@"location"];
-            }
             if (addresses) {
                 [dict setObject:[RadarAddress arrayForAddresses:addresses] forKey:@"addresses"];
             }
@@ -417,9 +455,6 @@
         [Radar geocodeAddress:query completionHandler:^(RadarStatus status, NSArray<RadarAddress *> * _Nullable addresses) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
-            if (location) {
-                [dict setObject:[Radar dictionaryForLocation:location] forKey:@"location"];
-            }
             if (addresses) {
                 [dict setObject:[RadarAddress arrayForAddresses:addresses] forKey:@"addresses"];
             }
@@ -435,9 +470,6 @@
         RadarGeocodeCompletionHandler completionHandler = ^(RadarStatus status, NSArray<RadarAddress *> * _Nullable addresses) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
-            if (location) {
-                [dict setObject:[Radar dictionaryForLocation:location] forKey:@"location"];
-            }
             if (addresses) {
                 [dict setObject:[RadarAddress arrayForAddresses:addresses] forKey:@"addresses"];
             }
@@ -454,7 +486,7 @@
             double longitude = [longitudeNumber doubleValue];
             CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
 
-            [Radar reverseGeocode:location completionHandler:completionHandler];
+            [Radar reverseGeocodeLocation:location completionHandler:completionHandler];
         } else {
             [Radar reverseGeocodeWithCompletionHandler:completionHandler];
         }
@@ -466,10 +498,7 @@
         [Radar ipGeocodeWithCompletionHandler:^(RadarStatus status, RadarAddress * _Nullable address) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
-            if (location) {
-                [dict setObject:[Radar dictionaryForLocation:location] forKey:@"location"];
-            }
-            if (addresses) {
+            if (address) {
                 [dict setObject:[address dictionaryValue] forKey:@"address"];
             }
 

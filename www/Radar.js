@@ -61,6 +61,18 @@ const onEvents = (callback) => {
   });
 };
 
+const onLocation = (callback) => {
+  exec('onLocation', null, (data) => {
+    callback(data.location, data.user);
+  });
+};
+
+const onClientLocation = (callback) => {
+  exec('onClientLocation', null, (data) => {
+    callback(data.location, data.stopped, data.source);
+  });
+};
+
 const onError = (callback) => {
   exec('onError', null, (data) => {
     callback(data.status);
@@ -69,6 +81,14 @@ const onError = (callback) => {
 
 const offEvents = () => {
   exec('offEvents');
+};
+
+const offLocation = () => {
+  exec('offLocation');
+};
+
+const offClientLocation = () => {
+  exec('offClientLocation');
 };
 
 const offError = () => {
@@ -132,8 +152,12 @@ const Radar = {
   startTrackingContinuous,
   stopTracking,
   onEvents,
+  onLocation,
+  onClientLocation,
   onError,
   offEvents,
+  offLocation,
+  offClientLocation,
   offError,
   getContext,
   searchPlaces,
