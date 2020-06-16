@@ -691,7 +691,6 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         if (modesList.contains("CAR") || modesList.contains("car")) {
             modes.add(Radar.RadarRouteMode.CAR);
         }
-        Log.v("RadarCordovaPlugin", modesList.toString());
         String unitsStr = optionsObj.getString("units");
         Radar.RadarRouteUnits units = unitsStr.equals("METRIC") || unitsStr.equals("metric") ? Radar.RadarRouteUnits.METRIC : Radar.RadarRouteUnits.IMPERIAL;
 
