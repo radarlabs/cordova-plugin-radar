@@ -131,6 +131,22 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)getLocation:(CDVInvokedUrlCommand *)command {
+    [self.commandDelegate runInBackground:^{
+        [Radar getLocationWithCompletionHandler:^(RadarStatus status, CLLocation *location, BOOL stopped) {
+            NSMutableDictionary *dict = [NSMutableDictionary new];
+            [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
+            if (location) {
+                [dict setObject:[Radar dictionaryForLocation:location] forKey:@"location"];
+            }
+            [dict setObject:@(stopped) forKey:@"stopped"];
+
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }];
+    }];
+}
+
 - (void)trackOnce:(CDVInvokedUrlCommand *)command {
     [self.commandDelegate runInBackground:^{
         RadarTrackCompletionHandler completionHandler = ^(RadarStatus status, CLLocation *location, NSArray<RadarEvent *> *events, RadarUser *user) {
@@ -153,7 +169,7 @@
         if (command.arguments && command.arguments.count) {
             NSDictionary *locationDict = [command.arguments objectAtIndex:0];
             NSNumber *latitudeNumber = locationDict[@"latitude"];
-            NSNumber *longitudeNumber = locationDict[@"longtiude"];
+            NSNumber *longitudeNumber = locationDict[@"longitude"];
             NSNumber *accuracyNumber = locationDict[@"accuracy"];
             double latitude = [latitudeNumber doubleValue];
             double longitude = [longitudeNumber doubleValue];
@@ -246,7 +262,7 @@
         if (command.arguments && command.arguments.count) {
             NSDictionary *locationDict = [command.arguments objectAtIndex:0];
             NSNumber *latitudeNumber = locationDict[@"latitude"];
-            NSNumber *longitudeNumber = locationDict[@"longtiude"];
+            NSNumber *longitudeNumber = locationDict[@"longitude"];
             double latitude = [latitudeNumber doubleValue];
             double longitude = [longitudeNumber doubleValue];
             CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
@@ -280,7 +296,7 @@
         NSDictionary *nearDict = optionsDict[@"near"];
         if (nearDict) {
             NSNumber *latitudeNumber = nearDict[@"latitude"];
-            NSNumber *longitudeNumber = nearDict[@"longtiude"];
+            NSNumber *longitudeNumber = nearDict[@"longitude"];
             double latitude = [latitudeNumber doubleValue];
             double longitude = [longitudeNumber doubleValue];
             near = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
@@ -333,7 +349,7 @@
         NSDictionary *nearDict = optionsDict[@"near"];
         if (nearDict) {
             NSNumber *latitudeNumber = nearDict[@"latitude"];
-            NSNumber *longitudeNumber = nearDict[@"longtiude"];
+            NSNumber *longitudeNumber = nearDict[@"longitude"];
             double latitude = [latitudeNumber doubleValue];
             double longitude = [longitudeNumber doubleValue];
             near = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
@@ -384,7 +400,7 @@
         NSDictionary *nearDict = optionsDict[@"near"];
         if (nearDict) {
             NSNumber *latitudeNumber = nearDict[@"latitude"];
-            NSNumber *longitudeNumber = nearDict[@"longtiude"];
+            NSNumber *longitudeNumber = nearDict[@"longitude"];
             double latitude = [latitudeNumber doubleValue];
             double longitude = [longitudeNumber doubleValue];
             near = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
@@ -422,7 +438,7 @@
         NSDictionary *nearDict = optionsDict[@"near"];
         if (nearDict) {
             NSNumber *latitudeNumber = nearDict[@"latitude"];
-            NSNumber *longitudeNumber = nearDict[@"longtiude"];
+            NSNumber *longitudeNumber = nearDict[@"longitude"];
             double latitude = [latitudeNumber doubleValue];
             double longitude = [longitudeNumber doubleValue];
             near = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
@@ -481,7 +497,7 @@
         if (command.arguments && command.arguments.count) {
             NSDictionary *locationDict = [command.arguments objectAtIndex:0];
             NSNumber *latitudeNumber = locationDict[@"latitude"];
-            NSNumber *longitudeNumber = locationDict[@"longtiude"];
+            NSNumber *longitudeNumber = locationDict[@"longitude"];
             double latitude = [latitudeNumber doubleValue];
             double longitude = [longitudeNumber doubleValue];
             CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
@@ -527,27 +543,27 @@
         NSDictionary *originDict = optionsDict[@"origin"];
         if (originDict) {
             NSNumber *originLatitudeNumber = originDict[@"latitude"];
-            NSNumber *originLongitudeNumber = originDict[@"longtiude"];
+            NSNumber *originLongitudeNumber = originDict[@"longitude"];
             double originLatitude = [originLatitudeNumber doubleValue];
             double originLongitude = [originLongitudeNumber doubleValue];
             origin = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(originLatitude, originLongitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
         }
         NSDictionary *destinationDict = optionsDict[@"destination"];
         NSNumber *destinationLatitudeNumber = destinationDict[@"latitude"];
-        NSNumber *destinationLongitudeNumber = destinationDict[@"longtiude"];
+        NSNumber *destinationLongitudeNumber = destinationDict[@"longitude"];
         double destinationLatitude = [destinationLatitudeNumber doubleValue];
         double destinationLongitude = [destinationLongitudeNumber doubleValue];
         CLLocation *destination = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
         NSArray *modesArr = optionsDict[@"modes"];
         RadarRouteMode modes = 0;
         if (modesArr != nil) {
-            if ([modesArr containsObject:@"FOOT"]) {
+            if ([modesArr containsObject:@"FOOT"] || [modesArr containsObject:@"foot"]) {
                 modes = modes | RadarRouteModeFoot;
             }
-            if ([modesArr containsObject:@"BIKE"]) {
+            if ([modesArr containsObject:@"BIKE"] || [modesArr containsObject:@"bike"]) {
                 modes = modes | RadarRouteModeBike;
             }
-            if ([modesArr containsObject:@"CAR"]) {
+            if ([modesArr containsObject:@"CAR"] || [modesArr containsObject:@"car"]) {
                 modes = modes | RadarRouteModeCar;
             }
         } else {
@@ -556,7 +572,7 @@
         NSString *unitsStr = optionsDict[@"units"];
         RadarRouteUnits units;
         if (unitsStr != nil && [unitsStr isKindOfClass:[NSString class]]) {
-            units = [unitsStr isEqualToString:@"METRIC"] ? RadarRouteUnitsMetric : RadarRouteUnitsImperial;
+            units = [unitsStr isEqualToString:@"METRIC"] || [unitsStr isEqualToString:@"metric"] ? RadarRouteUnitsMetric : RadarRouteUnitsImperial;
         } else {
             units = RadarRouteUnitsImperial;
         }
