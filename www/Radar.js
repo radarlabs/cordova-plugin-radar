@@ -51,6 +51,10 @@ const startTrackingContinuous = () => {
   exec('startTrackingContinuous');
 };
 
+const startTrackingCustom = (options, callback) => {
+  exec('startTrackingCustom', [options], callback);
+};
+
 const stopTracking = () => {
   exec('stopTracking');
 };

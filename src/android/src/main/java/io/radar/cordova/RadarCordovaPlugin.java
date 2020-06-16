@@ -3,7 +3,11 @@ package io.radar.cordova;
 import android.Manifest;
 import android.content.Context;
 import android.location.Location;
-import android.support.annotation.NonNull;
+import android.os.Build;
+
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -15,7 +19,14 @@ import org.json.JSONObject;
 
 import io.radar.sdk.Radar;
 import io.radar.sdk.RadarReceiver;
+import io.radar.sdk.RadarTrackingOptions;
+import io.radar.sdk.model.RadarAddress;
+import io.radar.sdk.model.RadarContext;
 import io.radar.sdk.model.RadarEvent;
+import io.radar.sdk.model.RadarGeofence;
+import io.radar.sdk.model.RadarPlace;
+import io.radar.sdk.model.RadarPoint;
+import io.radar.sdk.model.RadarRoutes;
 import io.radar.sdk.model.RadarUser;
 
 public class RadarCordovaPlugin extends CordovaPlugin {
@@ -46,6 +57,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             startTrackingResponsive(args, callbackContext);
         } else if (action.equals("startTrackingContinuous")) {
             startTrackingContinuous(args, callbackContext);
+        } else if (action.equals("startTrackingCustom")) {
+            startTrackingCustom(args, callbackContext);
         } else if (action.equals("stopTracking")) {
             stopTracking(args, callbackContext);
         } else if (action.equals("onEvents")) {
@@ -130,7 +143,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         }
 
         @Override
-        public void onClientLocationUpdated(Context context, Location location, boolean stopped, RadarLocationSource source) {
+        public void onClientLocationUpdated(Context context, Location location, boolean stopped, Radar.RadarLocationSource source) {
             if (RadarCordovaPlugin.clientLocationCallbackContext == null) {
                 return;
             }
@@ -167,10 +180,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             }
         }
 
+        @Override
+        public void onLog(Context context, String message) {
+
+        }
+
     }
 
     public static String[] stringArrayForArray(JSONArray jsonArr) throws JSONException {
-        if (array == null) {
+        if (jsonArr == null) {
             return null;
         }
 
@@ -207,10 +225,10 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public void getPermissionsStatus(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         String str;
-        boolean foreground = cordova.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        boolean foreground = cordova.hasPermission("android.permission.ACCESS_FINE_LOCATION");
         if (Build.VERSION.SDK_INT >= 29) {
             if (foreground) {
-                boolean background = cordova.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+                boolean background = cordova.hasPermission("android.permission.ACCESS_BACKGROUND_LOCATION");
                 str = background ? "GRANTED_BACKGROUND" : "GRANTED_FOREGROUND";
             } else {
                 str = "DENIED";
@@ -302,6 +320,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public void startTrackingContinuous(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.startTracking(RadarTrackingOptions.CONTINUOUS);
+
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+    }
+
+    public void startTrackingCustom(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final JSONObject optionsObj = args.getJSONObject(0);
+
+        RadarTrackingOptions options = RadarTrackingOptions.fromJson(optionsObj);
+        Radar.startTracking(trackingOptions);
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
@@ -427,7 +454,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void searchGeofences(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.RadarSearchGeofencesCallback callback = new Radar.RadarSearchGeofencesCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status, Location location, RadarGeofence[] places) {
+            public void onComplete(Radar.RadarStatus status, Location location, RadarGeofence[] geofences) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
@@ -470,7 +497,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void searchPoints(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.RadarSearchPointsCallback callback = new Radar.RadarSearchPointsCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status, Location location, RadarGeofence[] places) {
+            public void onComplete(Radar.RadarStatus status, Location location, RadarPoint[] points) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
@@ -599,7 +626,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     }
 
     public void ipGeocode(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Radar.ipGeocode(query, new Radar.RadarIpGeocodeCallback() {
+        Radar.ipGeocode(new Radar.RadarIpGeocodeCallback() {
             @Override
             public void onComplete(Radar.RadarStatus status, RadarAddress address) {
                 try {

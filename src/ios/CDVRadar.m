@@ -52,6 +52,7 @@
     [pluginResult setKeepCallbackAsBool:YES];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:clientLocationCallbackId];
 }
+
 - (void)didFailWithStatus:(RadarStatus)status {
     if (!errorCallbackId) {
         return;
@@ -199,6 +200,16 @@
 
 - (void)startTrackingContinuous:(CDVInvokedUrlCommand *)command {
     [Radar startTrackingWithOptions:RadarTrackingOptions.continuous];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)startTrackingCustom:(CDVInvokedUrlCommand *)command {
+    NSDitionary *optionsDict = [command.arguments objectAtIndex:0];
+
+    RadarTrackingOptions *options = [RadarTrackingOptions trackingOptionsFromDictionary:optionsDict];
+    [Radar startTrackingWithOptions:options];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
