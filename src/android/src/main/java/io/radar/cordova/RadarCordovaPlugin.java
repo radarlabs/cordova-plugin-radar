@@ -38,65 +38,70 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     private static CallbackContext errorCallbackContext;
 
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        if (action.equals("setUserId")) {
-            setUserId(args, callbackContext);
-        } else if (action.equals("setDescription")) {
-            setDescription(args, callbackContext);
-        } else if (action.equals("setMetadata")) {
-            setMetadata(args, callbackContext);
-        } else if (action.equals("getPermissionsStatus")) {
-            getPermissionsStatus(args, callbackContext);
-        } else if (action.equals("requestPermissions")) {
-            requestPermissions(args, callbackContext);
-        } else if (action.equals("getLocation")) {
-            getLocation(args, callbackContext);
-        } else if (action.equals("trackOnce")) {
-            trackOnce(args, callbackContext);
-        } else if (action.equals("startTrackingEfficient")) {
-            startTrackingEfficient(args, callbackContext);
-        } else if (action.equals("startTrackingResponsive")) {
-            startTrackingResponsive(args, callbackContext);
-        } else if (action.equals("startTrackingContinuous")) {
-            startTrackingContinuous(args, callbackContext);
-        } else if (action.equals("startTrackingCustom")) {
-            startTrackingCustom(args, callbackContext);
-        } else if (action.equals("stopTracking")) {
-            stopTracking(args, callbackContext);
-        } else if (action.equals("onEvents")) {
-            onEvents(args, callbackContext);
-        } else if (action.equals("onLocation")) {
-            onLocation(args, callbackContext);
-        } else if (action.equals("onClientLocation")) {
-            onClientLocation(args, callbackContext);
-        } else if (action.equals("onError")) {
-            onError(args, callbackContext);
-        } else if (action.equals("offEvents")) {
-            offEvents(args, callbackContext);
-        } else if (action.equals("offLocation")) {
-            offLocation(args, callbackContext);
-        } else if (action.equals("offClientLocation")) {
-            offClientLocation(args, callbackContext);
-        } else if (action.equals("offError")) {
-            offError(args, callbackContext);
-        } else if (action.equals("getContext")) {
-            getContext(args, callbackContext);
-        } else if (action.equals("searchPlaces")) {
-            searchPlaces(args, callbackContext);
-        } else if (action.equals("searchGeofences")) {
-            searchGeofences(args, callbackContext);
-        } else if (action.equals("searchPoints")) {
-            searchPoints(args, callbackContext);
-        } else if (action.equals("autocomplete")) {
-            autocomplete(args, callbackContext);
-        } else if (action.equals("geocode")) {
-            geocode(args, callbackContext);
-        } else if (action.equals("reverseGeocode")) {
-            reverseGeocode(args, callbackContext);
-        } else if (action.equals("ipGeocode")) {
-            ipGeocode(args, callbackContext);
-        } else if (action.equals("getDistance")) {
-            getDistance(args, callbackContext);
-        } else {
+        try {
+            if (action.equals("setUserId")) {
+                setUserId(args, callbackContext);
+            } else if (action.equals("setDescription")) {
+                setDescription(args, callbackContext);
+            } else if (action.equals("setMetadata")) {
+                setMetadata(args, callbackContext);
+            } else if (action.equals("getPermissionsStatus")) {
+                getPermissionsStatus(args, callbackContext);
+            } else if (action.equals("requestPermissions")) {
+                requestPermissions(args, callbackContext);
+            } else if (action.equals("getLocation")) {
+                getLocation(args, callbackContext);
+            } else if (action.equals("trackOnce")) {
+                trackOnce(args, callbackContext);
+            } else if (action.equals("startTrackingEfficient")) {
+                startTrackingEfficient(args, callbackContext);
+            } else if (action.equals("startTrackingResponsive")) {
+                startTrackingResponsive(args, callbackContext);
+            } else if (action.equals("startTrackingContinuous")) {
+                startTrackingContinuous(args, callbackContext);
+            } else if (action.equals("startTrackingCustom")) {
+                startTrackingCustom(args, callbackContext);
+            } else if (action.equals("stopTracking")) {
+                stopTracking(args, callbackContext);
+            } else if (action.equals("onEvents")) {
+                onEvents(args, callbackContext);
+            } else if (action.equals("onLocation")) {
+                onLocation(args, callbackContext);
+            } else if (action.equals("onClientLocation")) {
+                onClientLocation(args, callbackContext);
+            } else if (action.equals("onError")) {
+                onError(args, callbackContext);
+            } else if (action.equals("offEvents")) {
+                offEvents(args, callbackContext);
+            } else if (action.equals("offLocation")) {
+                offLocation(args, callbackContext);
+            } else if (action.equals("offClientLocation")) {
+                offClientLocation(args, callbackContext);
+            } else if (action.equals("offError")) {
+                offError(args, callbackContext);
+            } else if (action.equals("getContext")) {
+                getContext(args, callbackContext);
+            } else if (action.equals("searchPlaces")) {
+                searchPlaces(args, callbackContext);
+            } else if (action.equals("searchGeofences")) {
+                searchGeofences(args, callbackContext);
+            } else if (action.equals("searchPoints")) {
+                searchPoints(args, callbackContext);
+            } else if (action.equals("autocomplete")) {
+                autocomplete(args, callbackContext);
+            } else if (action.equals("geocode")) {
+                geocode(args, callbackContext);
+            } else if (action.equals("reverseGeocode")) {
+                reverseGeocode(args, callbackContext);
+            } else if (action.equals("ipGeocode")) {
+                ipGeocode(args, callbackContext);
+            } else if (action.equals("getDistance")) {
+                getDistance(args, callbackContext);
+            } else {
+                return false;
+            }
+        } catch (JSONException e) {
+            Log.e("RadarCordovaPlugin", "JSONException", e);
             return false;
         }
 
@@ -120,6 +125,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 pluginResult.setKeepCallback(true);
                 RadarCordovaPlugin.eventsCallbackContext.sendPluginResult(pluginResult);
             } catch (JSONException e) {
+                Log.e("RadarCordovaPlugin", "JSONException", e);
                 RadarCordovaPlugin.eventsCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
             }
         }
@@ -139,6 +145,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 pluginResult.setKeepCallback(true);
                 RadarCordovaPlugin.locationCallbackContext.sendPluginResult(pluginResult);
             } catch (JSONException e) {
+                Log.e("RadarCordovaPlugin", "JSONException", e);
                 RadarCordovaPlugin.locationCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
             }
         }
@@ -159,6 +166,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 pluginResult.setKeepCallback(true);
                 RadarCordovaPlugin.clientLocationCallbackContext.sendPluginResult(pluginResult);
             } catch (JSONException e) {
+                Log.e("RadarCordovaPlugin", "JSONException", e);
                 RadarCordovaPlugin.clientLocationCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
             }
         }
@@ -177,6 +185,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 pluginResult.setKeepCallback(true);
                 RadarCordovaPlugin.errorCallbackContext.sendPluginResult(pluginResult);
             } catch (JSONException e) {
+                Log.e("RadarCordovaPlugin", "JSONException", e);
                 RadarCordovaPlugin.errorCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
             }
         }
@@ -242,7 +251,13 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     }
 
     public void requestPermissions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        cordova.requestPermission(this, 0, Manifest.permission.ACCESS_FINE_LOCATION);
+        final boolean background = args.getBoolean(0);
+
+        if (background && Build.VERSION.SDK_INT >= 29) {
+            cordova.requestPermissions(this, 0, new String[] { "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_BACKGROUND_LOCATION" });
+        } else {
+            cordova.requestPermissions(this, 0, new String[] { "android.permission.ACCESS_FINE_LOCATION" });
+        }
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
@@ -261,6 +276,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
                 }
             }
@@ -286,6 +302,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
                 }
             }
@@ -423,6 +440,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
                 }
             }
@@ -468,6 +486,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
                 }
             }
@@ -511,6 +530,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
                 }
             }
@@ -565,6 +585,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
                 }
             }
@@ -586,6 +607,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
                 }
             }
@@ -605,6 +627,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
                 }
             }
@@ -639,6 +662,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
                 }
             }
@@ -658,6 +682,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
                 }
             }
