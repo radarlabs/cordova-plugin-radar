@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.location.Location;
 import android.os.Build;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -690,6 +691,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         if (modesList.contains("CAR") || modesList.contains("car")) {
             modes.add(Radar.RadarRouteMode.CAR);
         }
+        Log.v("RadarCordovaPlugin", modesList.toString());
         String unitsStr = optionsObj.getString("units");
         Radar.RadarRouteUnits units = unitsStr.equals("METRIC") || unitsStr.equals("metric") ? Radar.RadarRouteUnits.METRIC : Radar.RadarRouteUnits.IMPERIAL;
 
