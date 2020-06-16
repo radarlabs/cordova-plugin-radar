@@ -8,7 +8,7 @@
 
 See the Radar overview documentation [here](https://radar.io/documentation).
 
-Then, see the Radar Capacitor plugin documentation [here](https://radar.io/documentation/sdk/capacitor).
+Then, see the Radar Cordova plugin documentation [here](https://radar.io/documentation/sdk/cordova).
 
 ## Support
 
