@@ -112,6 +112,9 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
         @Override
         public void onEventsReceived(Context context, RadarEvent[] events, RadarUser user) {
+            Log.v("RadarCordovaPlugin", "onEventsReceived");
+            Log.v("RadarCordovaPlugin", RadarCordovaPlugin.eventsCallbackContext.toString());
+
             if (RadarCordovaPlugin.eventsCallbackContext == null) {
                 return;
             }
@@ -197,7 +200,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     }
 
-    public static String[] stringArrayForArray(JSONArray jsonArr) throws JSONException {
+    private static String[] stringArrayForArray(JSONArray jsonArr) throws JSONException {
         if (jsonArr == null) {
             return null;
         }

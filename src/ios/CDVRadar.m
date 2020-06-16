@@ -8,13 +8,9 @@
     NSString *errorCallbackId;
 }
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        [Radar setDelegate:self];
-        locationManager = [CLLocationManager new];
-    }
-    return self;
+- (void)pluginInitialize {
+  [Radar setDelegate:self];
+  locationManager = [CLLocationManager new];
 }
 
 - (void)didReceiveEvents:(NSArray<RadarEvent *> *)events user:(RadarUser *)user {

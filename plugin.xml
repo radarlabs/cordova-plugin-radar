@@ -12,6 +12,16 @@
                 <param name="android-package" value="io.radar.cordova.RadarCordovaPlugin"/>
             </feature>
         </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver
+                android:name="io.radar.cordova.RadarCordovaPlugin$RadarCordovaReceiver"
+                android:enabled="true"
+                android:exported="false">
+                <intent-filter>
+                    <action android:name="io.radar.sdk.RECEIVED" />
+                </intent-filter>
+            </receiver>
+        </config-file>
         <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java" target-dir="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java"/>
         <framework src="io.radar:sdk:3.0.+"/>
     </platform>
@@ -19,6 +29,7 @@
         <config-file target="config.xml" parent="/*">
             <feature name="Radar">
                 <param name="ios-package" value="CDVRadar"/>
+                <param name="onload" value="true" />
             </feature>
         </config-file>
         <header-file src="src/ios/CDVRadar.h"/>

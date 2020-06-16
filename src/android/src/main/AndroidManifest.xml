@@ -3,7 +3,7 @@
 
     <application>
         <receiver
-            android:name=".RadarCordovaPlugin$RadarCordovaReceiver"
+            android:name="io.radar.cordova.RadarCordovaPlugin$RadarCordovaReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
