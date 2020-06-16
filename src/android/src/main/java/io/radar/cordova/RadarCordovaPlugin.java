@@ -328,7 +328,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         final JSONObject optionsObj = args.getJSONObject(0);
 
         RadarTrackingOptions options = RadarTrackingOptions.fromJson(optionsObj);
-        Radar.startTracking(trackingOptions);
+        Radar.startTracking(options);
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }

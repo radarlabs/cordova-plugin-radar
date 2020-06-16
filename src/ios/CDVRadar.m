@@ -65,6 +65,10 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:errorCallbackId];
 }
 
+- (void)didLogMessage:(NSString *)message {
+
+}
+
 - (void)setUserId:(CDVInvokedUrlCommand *)command {
     NSString *userId = [command.arguments objectAtIndex:0];
 
@@ -206,7 +210,7 @@
 }
 
 - (void)startTrackingCustom:(CDVInvokedUrlCommand *)command {
-    NSDitionary *optionsDict = [command.arguments objectAtIndex:0];
+    NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
 
     RadarTrackingOptions *options = [RadarTrackingOptions trackingOptionsFromDictionary:optionsDict];
     [Radar startTrackingWithOptions:options];
