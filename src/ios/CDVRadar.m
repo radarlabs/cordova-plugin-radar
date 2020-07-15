@@ -373,6 +373,7 @@
             radius = 1000;
         }
         NSArray *tags = optionsDict[@"tags"];
+        NSDictionary *metadata = optionsDict[@"metadata"];
         NSNumber *limitNumber = optionsDict[@"limit"];
         int limit;
         if (limitNumber != nil && [limitNumber isKindOfClass:[NSNumber class]]) {
@@ -382,9 +383,9 @@
         }
 
         if (near) {
-            [Radar searchGeofencesNear:near radius:radius tags:tags limit:limit completionHandler:completionHandler];
+            [Radar searchGeofencesNear:near radius:radius tags:tags metadata:metadata limit:limit completionHandler:completionHandler];
         } else {
-            [Radar searchGeofencesWithRadius:radius tags:tags limit:limit completionHandler:completionHandler];
+            [Radar searchGeofencesWithRadius:radius tags:tags metadata:metadata limit:limit completionHandler:completionHandler];
         }
     }];
 }
