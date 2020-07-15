@@ -503,14 +503,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             near.setLatitude(latitude);
             near.setLongitude(longitude);
         }
+        JSONObject metadata = optionsObj.has("metadata") ? optionsObj.getJSONObject("metadata") : null;
         int radius = optionsObj.has("radius") ? optionsObj.getInt("radius") : 1000;
         String[] tags = optionsObj.has("tags") ? RadarCordovaPlugin.stringArrayForArray(optionsObj.getJSONArray("tags")) : null;
         int limit = optionsObj.has("limit") ? optionsObj.getInt("limit") : 10;
 
         if (near != null) {
-            Radar.searchGeofences(near, radius, tags, limit, callback);
+            Radar.searchGeofences(near, radius, tags, metadata, limit, callback);
         } else {
-            Radar.searchGeofences(radius, tags, limit, callback);
+            Radar.searchGeofences(radius, tags, metadata, limit, callback);
         }
     }
 
