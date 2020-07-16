@@ -375,11 +375,9 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         Radar.RadarRouteMode mode = Radar.RadarRouteMode.CAR;
         if (modeStr.equals("FOOT") || modeStr.equals("foot")) {
             mode = Radar.RadarRouteMode.FOOT;
-        }
-        if (modeStr.equals("BIKE") || modeStr.equals("bike")) {
+        } else if (modeStr.equals("BIKE") || modeStr.equals("bike")) {
             mode = Radar.RadarRouteMode.BIKE;
-        }
-        if (modeStr.equals("CAR") || modeStr.equals("car")) {
+        } else if (modeStr.equals("CAR") || modeStr.equals("car")) {
             mode = Radar.RadarRouteMode.CAR;
         }
         int steps = optionsObj.has("steps") ? optionsObj.getInt("steps") : 10;

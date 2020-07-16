@@ -235,11 +235,9 @@
         RadarRouteMode mode = RadarRouteModeCar;
         if ([modeStr isEqualToString:@"FOOT"] || [modeStr isEqualToString:@"foot"]) {
             mode = RadarRouteModeFoot;
-        }
-        if ([modeStr isEqualToString:@"BIKE"] || [modeStr isEqualToString:@"bike"]) {
+        } else if ([modeStr isEqualToString:@"BIKE"] || [modeStr isEqualToString:@"bike"]) {
             mode = RadarRouteModeBike;
-        }
-        if ([modeStr isEqualToString:@"CAR"] || [modeStr isEqualToString:@"car"]) {
+        } else if ([modeStr isEqualToString:@"CAR"] || [modeStr isEqualToString:@"car"]) {
             mode = RadarRouteModeCar;
         }
         NSNumber *stepsNumber = optionsDict[@"steps"];
