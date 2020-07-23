@@ -215,6 +215,66 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)mockTracking:(CDVInvokedUrlCommand *)command {
+    [self.commandDelegate runInBackground:^{
+        NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
+
+        NSDictionary *originDict = optionsDict[@"origin"];
+        NSNumber *originLatitudeNumber = originDict[@"latitude"];
+        NSNumber *originLongitudeNumber = originDict[@"longitude"];
+        double originLatitude = [originLatitudeNumber doubleValue];
+        double originLongitude = [originLongitudeNumber doubleValue];
+        CLLocation *origin = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(originLatitude, originLongitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
+        NSDictionary *destinationDict = optionsDict[@"destination"];
+        NSNumber *destinationLatitudeNumber = destinationDict[@"latitude"];
+        NSNumber *destinationLongitudeNumber = destinationDict[@"longitude"];
+        double destinationLatitude = [destinationLatitudeNumber doubleValue];
+        double destinationLongitude = [destinationLongitudeNumber doubleValue];
+        CLLocation *destination = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
+        NSString *modeStr = optionsDict[@"mode"];
+        RadarRouteMode mode = RadarRouteModeCar;
+        if ([modeStr isEqualToString:@"FOOT"] || [modeStr isEqualToString:@"foot"]) {
+            mode = RadarRouteModeFoot;
+        } else if ([modeStr isEqualToString:@"BIKE"] || [modeStr isEqualToString:@"bike"]) {
+            mode = RadarRouteModeBike;
+        } else if ([modeStr isEqualToString:@"CAR"] || [modeStr isEqualToString:@"car"]) {
+            mode = RadarRouteModeCar;
+        }
+        NSNumber *stepsNumber = optionsDict[@"steps"];
+        int steps;
+        if (stepsNumber != nil && [stepsNumber isKindOfClass:[NSNumber class]]) {
+            steps = [stepsNumber intValue];
+        } else {
+            steps = 10;
+        }
+        NSNumber *intervalNumber = optionsDict[@"interval"];
+        double interval;
+        if (intervalNumber != nil && [intervalNumber isKindOfClass:[NSNumber class]]) {
+            interval = [intervalNumber doubleValue];
+        } else {
+            interval = 1;
+        }
+
+        [Radar mockTrackingWithOrigin:origin destination:destination mode:mode steps:steps interval:interval completionHandler:^(RadarStatus status, CLLocation *location, NSArray<RadarEvent *> *events, RadarUser *user) {
+            NSMutableDictionary *dict = [NSMutableDictionary new];
+            [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
+            if (location) {
+                [dict setObject:[Radar dictionaryForLocation:location] forKey:@"location"];
+            }
+            if (events) {
+                [dict setObject:[RadarEvent arrayForEvents:events] forKey:@"events"];
+            }
+            if (user) {
+                [dict setObject:[user dictionaryValue] forKey:@"user"];
+            }
+
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+            [pluginResult setKeepCallbackAsBool:YES];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }];
+    }];
+}
+
 - (void)stopTracking:(CDVInvokedUrlCommand *)command {
     [Radar stopTracking];
 
@@ -252,6 +312,23 @@
 
 - (void)offError:(CDVInvokedUrlCommand *)command {
     errorCallbackId = nil;
+}
+
+- (void)startTrip:(CDVInvokedUrlCommand *)command {
+    NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
+
+    RadarTripOptions *options = [RadarTripOptions tripOptionsFromDictionary:optionsDict];
+    [Radar startTripWithOptions:options];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)stopTrip:(CDVInvokedUrlCommand *)command {
+    [Radar stopTrip];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)getContext:(CDVInvokedUrlCommand *)command {

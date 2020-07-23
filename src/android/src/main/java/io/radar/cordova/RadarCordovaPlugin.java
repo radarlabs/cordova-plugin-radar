@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import io.radar.sdk.Radar;
 import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarTrackingOptions;
+import io.radar.sdk.RadarTripOptions;
 import io.radar.sdk.model.RadarAddress;
 import io.radar.sdk.model.RadarContext;
 import io.radar.sdk.model.RadarEvent;
@@ -61,6 +62,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 startTrackingContinuous(args, callbackContext);
             } else if (action.equals("startTrackingCustom")) {
                 startTrackingCustom(args, callbackContext);
+            } else if (action.equals("mockTracking")) {
+                mockTracking(args, callbackContext);
             } else if (action.equals("stopTracking")) {
                 stopTracking(args, callbackContext);
             } else if (action.equals("onEvents")) {
@@ -79,6 +82,10 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 offClientLocation(args, callbackContext);
             } else if (action.equals("offError")) {
                 offError(args, callbackContext);
+            } else if (action.equals("startTrip")) {
+                startTrip(args, callbackContext);
+            } else if (action.equals("stopTrip")) {
+                stopTrip(args, callbackContext);
             } else if (action.equals("getContext")) {
                 getContext(args, callbackContext);
             } else if (action.equals("searchPlaces")) {
@@ -351,6 +358,59 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 
+    public void mockTracking(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final JSONObject optionsObj = args.getJSONObject(0);
+
+        JSONObject originObj = optionsObj.getJSONObject("origin");
+        double originLatitude = originObj.getDouble("latitude");
+        double originLongitude = originObj.getDouble("longitude");
+        Location origin = new Location("RNRadarModule");
+        origin.setLatitude(originLatitude);
+        origin.setLongitude(originLongitude);
+        JSONObject destinationObj = optionsObj.getJSONObject("destination");
+        double destinationLatitude = destinationObj.getDouble("latitude");
+        double destinationLongitude = destinationObj.getDouble("longitude");
+        Location destination = new Location("RNRadarModule");
+        destination.setLatitude(destinationLatitude);
+        destination.setLongitude(destinationLongitude);
+        String modeStr = optionsObj.getString("mode");
+        Radar.RadarRouteMode mode = Radar.RadarRouteMode.CAR;
+        if (modeStr.equals("FOOT") || modeStr.equals("foot")) {
+            mode = Radar.RadarRouteMode.FOOT;
+        } else if (modeStr.equals("BIKE") || modeStr.equals("bike")) {
+            mode = Radar.RadarRouteMode.BIKE;
+        } else if (modeStr.equals("CAR") || modeStr.equals("car")) {
+            mode = Radar.RadarRouteMode.CAR;
+        }
+        int steps = optionsObj.has("steps") ? optionsObj.getInt("steps") : 10;
+        int interval = optionsObj.has("interval") ? optionsObj.getInt("interval") : 1;
+
+        Radar.mockTracking(origin, destination, mode, steps, interval, new Radar.RadarTrackCallback() {
+            @Override
+            public void onComplete(Radar.RadarStatus status, Location location, RadarEvent[] events, RadarUser user) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+                    if (location != null) {
+                        obj.put("location", Radar.jsonForLocation(location));
+                    }
+                    if (events != null) {
+                        obj.put("events", RadarEvent.toJson(events));
+                    }
+                    if (user != null) {
+                        obj.put("user", user.toJson());
+                    }
+
+                    pluginResult.setKeepCallback(true);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
+            }
+        });
+    }
+
     public void stopTracking(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.stopTracking();
 
@@ -387,6 +447,21 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public void offError(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         RadarCordovaPlugin.errorCallbackContext = null;
+    }
+
+    public void startTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final JSONObject optionsObj = args.getJSONObject(0);
+
+        RadarTripOptions options = RadarTripOptions.fromJson(optionsObj);
+        Radar.startTrip(options);
+
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+    }
+
+    public void stopTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        Radar.stopTrip();
+
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 
     public void getContext(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
