@@ -600,12 +600,13 @@
 
 - (void)ipGeocode:(CDVInvokedUrlCommand *)command {
     [self.commandDelegate runInBackground:^{
-        [Radar ipGeocodeWithCompletionHandler:^(RadarStatus status, RadarAddress * _Nullable address) {
+        [Radar ipGeocodeWithCompletionHandler:^(RadarStatus status, RadarAddress * _Nullable address, BOOL proxy) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
             if (address) {
                 [dict setObject:[address dictionaryValue] forKey:@"address"];
             }
+            [dict setValue:@(proxy) forKey:@"proxy"];
 
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];

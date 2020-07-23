@@ -729,13 +729,14 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void ipGeocode(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.ipGeocode(new Radar.RadarIpGeocodeCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status, RadarAddress address) {
+            public void onComplete(Radar.RadarStatus status, RadarAddress address, boolean proxy) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
                     if (address != null) {
                         obj.put("address", address.toJson());
                     }
+                    obj.put("proxy", proxy);
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
