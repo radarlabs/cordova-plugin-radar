@@ -401,8 +401,9 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                         obj.put("user", user.toJson());
                     }
 
+                    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
                     pluginResult.setKeepCallback(true);
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                    callbackContext.sendPluginResult(pluginResult);
                 } catch (JSONException e) {
                     Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
