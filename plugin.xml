@@ -23,7 +23,7 @@
             </receiver>
         </config-file>
         <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java" target-dir="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java"/>
-        <framework src="io.radar:sdk:3.0.2"/>
+        <framework src="io.radar:sdk:3.0.4"/>
     </platform>
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
@@ -34,6 +34,6 @@
         </config-file>
         <header-file src="src/ios/CDVRadar.h"/>
         <source-file src="src/ios/CDVRadar.m"/>
-        <framework src="RadarSDK" type="podspec" spec="3.0.3"/>
+        <framework src="RadarSDK" type="podspec" spec="3.0.4"/>
     </platform>
 </plugin>
