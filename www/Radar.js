@@ -55,6 +55,10 @@ const startTrackingCustom = (options, callback) => {
   exec('startTrackingCustom', [options], callback);
 };
 
+const mockTracking = (options, callback) => {
+  exec('mockTracking', [options], callback);
+};
+
 const stopTracking = () => {
   exec('stopTracking');
 };
@@ -97,6 +101,14 @@ const offClientLocation = () => {
 
 const offError = () => {
   exec('offEvents');
+};
+
+const startTrip = (options, callback) => {
+  exec('startTrip', [options], callback);
+};
+
+const stopTrip = () => {
+  exec('stopTrip');
 };
 
 const getContext = (arg1, arg2) => {
@@ -154,6 +166,7 @@ const Radar = {
   startTrackingEfficient,
   startTrackingResponsive,
   startTrackingContinuous,
+  mockTracking,
   stopTracking,
   onEvents,
   onLocation,
@@ -163,6 +176,8 @@ const Radar = {
   offLocation,
   offClientLocation,
   offError,
+  startTrip,
+  stopTrip,
   getContext,
   searchPlaces,
   searchGeofences,
