@@ -735,8 +735,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                     obj.put("status", status.toString());
                     if (address != null) {
                         obj.put("address", address.toJson());
+                        obj.put("proxy", proxy);
                     }
-                    obj.put("proxy", proxy);
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {

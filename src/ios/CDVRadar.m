@@ -605,8 +605,8 @@
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
             if (address) {
                 [dict setObject:[address dictionaryValue] forKey:@"address"];
+                [dict setValue:@(proxy) forKey:@"proxy"];
             }
-            [dict setValue:@(proxy) forKey:@"proxy"];
 
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
