@@ -166,6 +166,7 @@ const Radar = {
   startTrackingEfficient,
   startTrackingResponsive,
   startTrackingContinuous,
+  startTrackingCustom,
   mockTracking,
   stopTracking,
   onEvents,
