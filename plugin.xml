@@ -23,7 +23,7 @@
             </receiver>
         </config-file>
         <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java" target-dir="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java"/>
-        <framework src="io.radar:sdk:3.0.5"/>
+        <framework src="io.radar:sdk:3.0.6"/>
     </platform>
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
