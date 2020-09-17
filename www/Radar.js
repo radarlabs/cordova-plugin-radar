@@ -11,6 +11,15 @@ const setUserId = (userId) => {
   exec('setUserId', [userId]);
 };
 
+const startForegroundThread = (args, callback) => {
+  console.log('args received in www.....', JSON.stringify(args));
+  exec("startForegroundThread", [args.title || "", args.text || "", args.icon || "", args.importance || "1", args.notificationId || ""], callback);
+};
+
+const stopForeground = () => {
+  exec('stopForeground', []);
+};
+
 const setDescription = (description) => {
   exec('setDescription', [description]);
 };
@@ -188,6 +197,8 @@ const Radar = {
   reverseGeocode,
   ipGeocode,
   getDistance,
+  stopForeground,
+  startForegroundThread
 };
 
 module.exports = Radar;
