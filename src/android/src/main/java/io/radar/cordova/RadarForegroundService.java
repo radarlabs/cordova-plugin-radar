@@ -10,14 +10,13 @@ import android.os.IBinder;
 import android.os.Bundle;
 import android.annotation.TargetApi;
 
-public class ForegroundService extends Service {
+public class RadarForegroundService extends Service {
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals("start")) {
-            // Start the service
             startPluginForegroundService(intent.getExtras());
         } else {
-            // Stop the service
             stopForeground(true);
             stopSelf();
         }
@@ -28,11 +27,9 @@ public class ForegroundService extends Service {
     private void startPluginForegroundService(Bundle extras) {
         Context context = getApplicationContext();
 
-        // Delete notification channel if it already exists
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.deleteNotificationChannel("foreground.service.channel");
+        manager.deleteNotificationChannel("location");
 
-        // Get notification channel importance
         Integer importance;
 
         try {
@@ -50,23 +47,17 @@ public class ForegroundService extends Service {
                 break;
             default:
                 importance = NotificationManager.IMPORTANCE_LOW;
-            // We are not using IMPORTANCE_MIN because we want the notification to be visible
         }
 
-        // Create notification channel
-        NotificationChannel channel = new NotificationChannel("foreground.service.channel", "Background Services", importance);
-        channel.setDescription("Enables background processing.");
+        NotificationChannel channel = new NotificationChannel("location", "Location", importance);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
-
-        // Make notification
-        Notification notification = new Notification.Builder(context, "foreground.service.channel")
+        Notification notification = new Notification.Builder(context, "location")
             .setContentTitle((CharSequence) extras.get("title"))
             .setContentText((CharSequence) extras.get("text"))
             .setOngoing(true)
             .build();
 
-        // Get notification ID
         Integer id;
         try {
             id = Integer.parseInt((String) extras.get("id"));
@@ -74,12 +65,12 @@ public class ForegroundService extends Service {
             id = 0;
         }
 
-        // Put service in foreground and show notification (id of 0 is not allowed)
         startForeground(id != 0 ? id : 197812504, notification);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException();
     }
+
 }

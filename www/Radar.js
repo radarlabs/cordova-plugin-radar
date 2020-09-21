@@ -11,14 +11,6 @@ const setUserId = (userId) => {
   exec('setUserId', [userId]);
 };
 
-const startForegroundThread = (args, callback) => {
-  exec("startForegroundThread", [args.title || "", args.text || "", args.icon || "", args.importance || "1", args.notificationId || ""], callback);
-};
-
-const stopForeground = () => {
-  exec('stopForeground', []);
-};
-
 const setDescription = (description) => {
   exec('setDescription', [description]);
 };
@@ -163,6 +155,14 @@ const getDistance = (options, callback) => {
   exec('getDistance', [options], callback);
 };
 
+const startForegroundService = (args, callback) => {
+  exec('startForegroundService', [args.title || '', args.text || '', args.icon || '', args.importance || '1', args.notificationId || ''], callback);
+};
+
+const stopForegroundService = () => {
+  exec('stopForegroundService', []);
+};
+
 const Radar = {
   setUserId,
   setDescription,
@@ -196,8 +196,8 @@ const Radar = {
   reverseGeocode,
   ipGeocode,
   getDistance,
-  stopForeground,
-  startForegroundThread
+  startForegroundService,
+  stopForegroundService
 };
 
 module.exports = Radar;
