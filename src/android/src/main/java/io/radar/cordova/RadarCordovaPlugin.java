@@ -108,11 +108,11 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 ipGeocode(args, callbackContext);
             } else if (action.equals("getDistance")) {
                 getDistance(args, callbackContext);
-            } else if (action.equals("startForegroundThread")) {
-                startForegroundThread(args, callbackContext);
-            } else if (action.equals("stopForeground")) {
-                stopForeground(args, callbackContext);
-            }   else {
+            } else if (action.equals("startForegroundService")) {
+                startForegroundService(args, callbackContext);
+            } else if (action.equals("stopForegroundService")) {
+                stopForegroundService(args, callbackContext);
+            } else {
                 return false;
             }
         } catch (JSONException e) {
