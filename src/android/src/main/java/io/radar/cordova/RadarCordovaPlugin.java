@@ -812,34 +812,26 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         }
     }
 
-
-    public void startForegroundThread(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+    public void startForegroundService(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         if (Build.VERSION.SDK_INT >= 26) {
             Activity activity = cordova.getActivity();
-            Intent intent = new Intent(activity, ForegroundService.class);
-            // Tell the service we want to start it
+            Intent intent = new Intent(activity, RadarForegroundService.class);
             intent.setAction("start");
-
-            // Pass the notification title/text/icon to the service
             intent.putExtra("title", args.getString(0))
                 .putExtra("text", args.getString(1))
                 .putExtra("icon", args.getString(2))
                 .putExtra("importance", args.getString(3))
                 .putExtra("id", args.getString(4));
-            
-            // Start the service
             activity.getApplicationContext().startForegroundService(intent);
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
         }
     }
 
-    public void stopForeground(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+    public void stopForegroundService(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         if (Build.VERSION.SDK_INT >= 26) {
             Activity activity = cordova.getActivity();
-            Intent intent = new Intent(activity, ForegroundService.class);
-            // Tell the service we want to stop it
+            Intent intent = new Intent(activity, RadarForegroundService.class);
             intent.setAction("stop");
-            // Stop the service
             activity.getApplicationContext().startService(intent);
         }
     }
