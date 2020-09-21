@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
-           id="cordova-plugin-radar"
-           version="1.0.0">
+        id="cordova-plugin-radar"
+        version="1.0.0">
     <name>Radar</name>
     <js-module src="www/Radar.js" name="Radar">
         <clobbers target="cordova.plugins.radar"/>
@@ -13,17 +13,32 @@
             </feature>
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <service  android:name="io.radar.cordova.ForegroundService" android:foregroundServiceType="location" android:stopWithTask="true" />
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <receiver
-                android:name="io.radar.cordova.RadarCordovaPlugin$RadarCordovaReceiver"
-                android:enabled="true"
-                android:exported="false">
+                    android:name="io.radar.cordova.RadarCordovaPlugin$RadarCordovaReceiver"
+                    android:enabled="true"
+                    android:exported="false">
                 <intent-filter>
                     <action android:name="io.radar.sdk.RECEIVED" />
                 </intent-filter>
             </receiver>
         </config-file>
-        <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java" target-dir="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java"/>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+        </config-file>
+
+        <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java" target-dir="src/android/src/main/java/io/radar/cordova"/>
+        <source-file src="src/android/src/main/java/io/radar/cordova/ForegroundService.java" target-dir="src/android/src/main/java/io/radar/cordova"/>
+
         <framework src="io.radar:sdk:3.0.6"/>
+
     </platform>
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
@@ -32,6 +47,22 @@
                 <param name="onload" value="true" />
             </feature>
         </config-file>
+
+        <preference name="LOCATION_USAGE_DESCRIPTION" default="This app requires access to your location for geofencing purposes" />
+        <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
+            <string>$NS_LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION</string>
+        </config-file>
+
+        <preference name="NS_LOCATION_ALWAYS_AND_WHEN_IN_USE_USAGE_DESCRIPTION" default="This app requires access to your location for geofencing purposes" />
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
+            <string>$NS_LOCATION_ALWAYS_AND_WHEN_IN_USE_USAGE_DESCRIPTION</string>
+        </config-file>
+
+        <preference name="NS_LOCATION_ALWAYS_USAGE_DESCRIPTION" default="This app requires access to your location for geofencing purposes" />
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
+            <string>$NS_LOCATION_ALWAYS_USAGE_DESCRIPTION</string>
+        </config-file>
+
         <header-file src="src/ios/CDVRadar.h"/>
         <source-file src="src/ios/CDVRadar.m"/>
         <framework src="RadarSDK" type="podspec" spec="3.0.4"/>
