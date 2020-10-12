@@ -2,6 +2,7 @@ package io.radar.cordova;
 
 import android.content.Intent;
 import android.content.Context;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -54,11 +55,22 @@ public class RadarForegroundService extends Service {
 
         int icon = getResources().getIdentifier((String) extras.get("icon"), "drawable", context.getPackageName());
 
+        PendingIntent pendingIntent;
+        try {
+            Class activityClass = Class.forName((String) extras.get("activity"));
+            Intent intent = new Intent(this, activityClass);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        } catch (ClassNotFoundException e) {
+            pendingIntent = null;
+        }
+
         Notification notification = new Notification.Builder(context, "location")
             .setContentTitle((CharSequence) extras.get("title"))
             .setContentText((CharSequence) extras.get("text"))
             .setOngoing(true)
-            .setSmallIcon(icon != 0 ? icon: 17301575)
+            .setSmallIcon(icon != 0 ? icon : 17301546) // r_drawable_ic_dialog_map
+            .setContentIntent(pendingIntent)
             .build();
 
         Integer id;

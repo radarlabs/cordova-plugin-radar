@@ -821,7 +821,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 .putExtra("text", args.getString(1))
                 .putExtra("icon", args.getString(2))
                 .putExtra("importance", args.getString(3))
-                .putExtra("id", args.getString(4));
+                .putExtra("id", args.getString(4))
+                .putExtra("activity", activity.getClass().getCanonicalName());
             activity.getApplicationContext().startForegroundService(intent);
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
         }
