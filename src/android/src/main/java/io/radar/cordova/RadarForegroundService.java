@@ -52,10 +52,13 @@ public class RadarForegroundService extends Service {
         NotificationChannel channel = new NotificationChannel("location", "Location", importance);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
 
+        int icon = getResources().getIdentifier((String) extras.get("icon"), "drawable", context.getPackageName());
+
         Notification notification = new Notification.Builder(context, "location")
             .setContentTitle((CharSequence) extras.get("title"))
             .setContentText((CharSequence) extras.get("text"))
             .setOngoing(true)
+            .setSmallIcon(icon != 0 ? icon: 17301575)
             .build();
 
         Integer id;
@@ -65,7 +68,7 @@ public class RadarForegroundService extends Service {
             id = 0;
         }
 
-        startForeground(id != 0 ? id : 197812504, notification);
+        startForeground(id != 0 ? id : 20160525, notification);
     }
 
     @Override
