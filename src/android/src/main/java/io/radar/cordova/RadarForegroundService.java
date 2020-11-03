@@ -15,11 +15,13 @@ public class RadarForegroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getAction().equals("start")) {
-            startPluginForegroundService(intent.getExtras());
-        } else {
-            stopForeground(true);
-            stopSelf();
+        if (intent != null) {
+            if (intent.getAction().equals("start")) {
+                startPluginForegroundService(intent.getExtras());
+            } else if (intent.getAction().equals("stop")) {
+                stopForeground(true);
+                stopSelf();
+            }
         }
 
         return START_STICKY;
