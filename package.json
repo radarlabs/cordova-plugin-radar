@@ -1,6 +1,6 @@
 {
   "name": "@radarlabs/cordova-plugin-radar",
-  "description": "Cordova plugin for Radar, location data infrastructure",
+  "description": "Cordova plugin for Radar, the leading geofencing and location tracking platform",
   "homepage": "https://www.radar.io",
   "license": "Apache-2.0",
   "version": "3.1.0",
