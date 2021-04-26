@@ -107,8 +107,12 @@ const startTrip = (options, callback) => {
   exec('startTrip', [options], callback);
 };
 
-const stopTrip = () => {
-  exec('stopTrip');
+const completeTrip = () => {
+  exec('completeTrip');
+};
+
+const cancelTrip = () => {
+  exec('cancelTrip');
 };
 
 const getContext = (arg1, arg2) => {
@@ -125,10 +129,6 @@ const searchPlaces = (options, callback) => {
 
 const searchGeofences = (options, callback) => {
   exec('searchGeofences', [options], callback);
-};
-
-const searchPoints = (options, callback) => {
-  exec('searchPoints', [options], callback);
 };
 
 const autocomplete = (options, callback) => {
@@ -186,11 +186,11 @@ const Radar = {
   offClientLocation,
   offError,
   startTrip,
-  stopTrip,
+  completeTrip,
+  cancelTrip,
   getContext,
   searchPlaces,
   searchGeofences,
-  searchPoints,
   autocomplete,
   geocode,
   reverseGeocode,

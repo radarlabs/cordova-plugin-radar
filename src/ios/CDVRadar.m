@@ -324,8 +324,15 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)stopTrip:(CDVInvokedUrlCommand *)command {
-    [Radar stopTrip];
+- (void)completeTrip:(CDVInvokedUrlCommand *)command {
+    [Radar completeTrip];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)cancelTrip:(CDVInvokedUrlCommand *)command {
+    [Radar cancelTrip];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -463,57 +470,6 @@
             [Radar searchGeofencesNear:near radius:radius tags:tags metadata:metadata limit:limit completionHandler:completionHandler];
         } else {
             [Radar searchGeofencesWithRadius:radius tags:tags metadata:metadata limit:limit completionHandler:completionHandler];
-        }
-    }];
-}
-
-- (void)searchPoints:(CDVInvokedUrlCommand *)command {
-    [self.commandDelegate runInBackground:^{
-        RadarSearchPointsCompletionHandler completionHandler = ^(RadarStatus status, CLLocation * _Nullable location, NSArray<RadarPoint *> * _Nullable points) {
-            NSMutableDictionary *dict = [NSMutableDictionary new];
-            [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
-            if (location) {
-                [dict setObject:[Radar dictionaryForLocation:location] forKey:@"location"];
-            }
-            if (points) {
-                [dict setObject:[RadarPoint arrayForPoints:points] forKey:@"points"];
-            }
-
-            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
-            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        };
-
-        NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
-
-        CLLocation *near;
-        NSDictionary *nearDict = optionsDict[@"near"];
-        if (nearDict) {
-            NSNumber *latitudeNumber = nearDict[@"latitude"];
-            NSNumber *longitudeNumber = nearDict[@"longitude"];
-            double latitude = [latitudeNumber doubleValue];
-            double longitude = [longitudeNumber doubleValue];
-            near = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
-        }
-        NSNumber *radiusNumber = optionsDict[@"radius"];
-        int radius;
-        if (radiusNumber != nil && [radiusNumber isKindOfClass:[NSNumber class]]) {
-            radius = [radiusNumber intValue];
-        } else {
-            radius = 1000;
-        }
-        NSArray *tags = optionsDict[@"tags"];
-        NSNumber *limitNumber = optionsDict[@"limit"];
-        int limit;
-        if (limitNumber != nil && [limitNumber isKindOfClass:[NSNumber class]]) {
-            limit = [limitNumber intValue];
-        } else {
-            limit = 10;
-        }
-
-        if (near) {
-            [Radar searchPointsNear:near radius:radius tags:tags limit:limit completionHandler:completionHandler];
-        } else {
-            [Radar searchPointsWithRadius:radius tags:tags limit:limit completionHandler:completionHandler];
         }
     }];
 }
