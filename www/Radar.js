@@ -131,10 +131,6 @@ const searchGeofences = (options, callback) => {
   exec('searchGeofences', [options], callback);
 };
 
-const searchPoints = (options, callback) => {
-  exec('searchPoints', [options], callback);
-};
-
 const autocomplete = (options, callback) => {
   exec('autocomplete', [options], callback);
 };
@@ -195,7 +191,6 @@ const Radar = {
   getContext,
   searchPlaces,
   searchGeofences,
-  searchPoints,
   autocomplete,
   geocode,
   reverseGeocode,

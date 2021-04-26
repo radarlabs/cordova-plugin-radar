@@ -98,8 +98,6 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 searchPlaces(args, callbackContext);
             } else if (action.equals("searchGeofences")) {
                 searchGeofences(args, callbackContext);
-            } else if (action.equals("searchPoints")) {
-                searchPoints(args, callbackContext);
             } else if (action.equals("autocomplete")) {
                 autocomplete(args, callbackContext);
             } else if (action.equals("geocode")) {
@@ -604,50 +602,6 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             Radar.searchGeofences(near, radius, tags, metadata, limit, callback);
         } else {
             Radar.searchGeofences(radius, tags, metadata, limit, callback);
-        }
-    }
-
-    public void searchPoints(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Radar.RadarSearchPointsCallback callback = new Radar.RadarSearchPointsCallback() {
-            @Override
-            public void onComplete(Radar.RadarStatus status, Location location, RadarPoint[] points) {
-                try {
-                    JSONObject obj = new JSONObject();
-                    obj.put("status", status.toString());
-                    if (location != null) {
-                        obj.put("location", Radar.jsonForLocation(location));
-                    }
-                    if (points != null) {
-                        obj.put("points", RadarPoint.toJson(points));
-                    }
-
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
-                } catch (JSONException e) {
-                    Log.e("RadarCordovaPlugin", "JSONException", e);
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
-                }
-            }
-        };
-
-        final JSONObject optionsObj = args.getJSONObject(0);
-
-        Location near = null;
-        if (optionsObj.has("near")) {
-            JSONObject nearObj = optionsObj.getJSONObject("near");
-            double latitude = nearObj.getDouble("latitude");
-            double longitude = nearObj.getDouble("longitude");
-            near = new Location("RNRadarModule");
-            near.setLatitude(latitude);
-            near.setLongitude(longitude);
-        }
-        int radius = optionsObj.has("radius") ? optionsObj.getInt("radius") : 1000;
-        String[] tags = optionsObj.has("tags") ? RadarCordovaPlugin.stringArrayForArray(optionsObj.getJSONArray("tags")) : null;
-        int limit = optionsObj.has("limit") ? optionsObj.getInt("limit") : 10;
-
-        if (near != null) {
-            Radar.searchPoints(near, radius, tags, limit, callback);
-        } else {
-            Radar.searchPoints(radius, tags, limit, callback);
         }
     }
 
