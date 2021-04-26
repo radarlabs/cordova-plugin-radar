@@ -88,8 +88,10 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 offError(args, callbackContext);
             } else if (action.equals("startTrip")) {
                 startTrip(args, callbackContext);
-            } else if (action.equals("stopTrip")) {
-                stopTrip(args, callbackContext);
+            } else if (action.equals("completeTrip")) {
+                completeTrip(args, callbackContext);
+            } else if (action.equals("cancelTrip")) {
+                cancelTrip(args, callbackContext);
             } else if (action.equals("getContext")) {
                 getContext(args, callbackContext);
             } else if (action.equals("searchPlaces")) {
@@ -467,8 +469,14 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 
-    public void stopTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Radar.stopTrip();
+    public void completeTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        Radar.completeTrip();
+
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+    }
+
+    public void cancelTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        Radar.cancelTrip();
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }

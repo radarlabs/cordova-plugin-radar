@@ -324,8 +324,15 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)stopTrip:(CDVInvokedUrlCommand *)command {
-    [Radar stopTrip];
+- (void)completeTrip:(CDVInvokedUrlCommand *)command {
+    [Radar completeTrip];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)cancelTrip:(CDVInvokedUrlCommand *)command {
+    [Radar cancelTrip];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];

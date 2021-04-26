@@ -107,8 +107,12 @@ const startTrip = (options, callback) => {
   exec('startTrip', [options], callback);
 };
 
-const stopTrip = () => {
-  exec('stopTrip');
+const completeTrip = () => {
+  exec('completeTrip');
+};
+
+const cancelTrip = () => {
+  exec('cancelTrip');
 };
 
 const getContext = (arg1, arg2) => {
@@ -186,7 +190,8 @@ const Radar = {
   offClientLocation,
   offError,
   startTrip,
-  stopTrip,
+  completeTrip,
+  cancelTrip,
   getContext,
   searchPlaces,
   searchGeofences,
