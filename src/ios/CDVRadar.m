@@ -324,6 +324,34 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)updateTrip:(CDVInvokedUrlCommand *)command {
+    NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
+
+    NSDictionary *tripOptionsDict = optionsDict[@"options"];
+    NSString *statusStr = optionsDict[@"status"];
+
+    RadarTripOptions *options = [RadarTripOptions tripOptionsFromDictionary:tripOptionsDict];
+    RadarTripStatus status = RadarTripStatusUnknown;
+    if (statusStr) {
+        if ([statusStr isEqualToString:@"started"]) {
+            status = RadarTripStatusStarted;
+        } else if ([statusStr isEqualToString:@"approaching"]) {
+            status = RadarTripStatusApproaching;
+        } else if ([statusStr isEqualToString:@"arrived"]) {
+            status = RadarTripStatusArrived;
+        } else if ([statusStr isEqualToString:@"completed"]) {
+            status = RadarTripStatusCompleted;
+        } else if ([statusStr isEqualToString:@"canceled"]) {
+            status = RadarTripStatusCanceled;
+        }
+    }
+
+    [Radar updateTripWithOptions:options status:status];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)completeTrip:(CDVInvokedUrlCommand *)command {
     [Radar completeTrip];
 
