@@ -88,7 +88,9 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             } else if (action.equals("offError")) {
                 offError(args, callbackContext);
             } else if (action.equals("startTrip")) {
-                startTrip(args, callbackContext);
+              startTrip(args, callbackContext);
+            } else if (action.equals("getTripOptions")) {
+              getTripOptions(args, callbackContext);
             } else if (action.equals("updateTrip")) {
                 updateTrip(args, callbackContext);
             } else if (action.equals("completeTrip")) {
@@ -472,30 +474,38 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 
+    public void getTripOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+      RadarTripOptions tripOptions = Radar.getTripOptions();
+      JSONObject tripOptionsObj = new JSONObject();
+      if (tripOptionsObj != null) {
+        tripOptionsObj = tripOptions.toJson(); 
+      }
+      PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, tripOptionsObj);
+      callbackContext.sendPluginResult(pluginResult);
+    }
+
     public void updateTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         final JSONObject optionsObj = args.getJSONObject(0);
-        
+
         JSONObject tripOptionsObj = optionsObj.getJSONObject("options");
         String statusStr = optionsObj.getString("status");
 
         RadarTripOptions options = RadarTripOptions.fromJson(tripOptionsObj);
-        RadarTrip.RadarTripStatus status = RadarTrip.RadarTripStatus.UNKNOWN;
-        if (status != null) {
-            if (statusStr.equals("started")) {
-                status = RadarTrip.RadarTripStatus.UNKNOWN;
-            } else if (statusStr.equals("started")) {
-                status = RadarTrip.RadarTripStatus.STARTED;
-            } else if (statusStr.equals("approaching")) {
-                status = RadarTrip.RadarTripStatus.APPROACHING;
-            } else if (statusStr.equals("arrived")) {
-                status = RadarTrip.RadarTripStatus.ARRIVED;
-            } else if (statusStr.equals("completed")) {
-                status = RadarTrip.RadarTripStatus.COMPLETED;
-            } else if (statusStr.equals("canceled")) {
-                status = RadarTrip.RadarTripStatus.CANCELED;
-            }
+        RadarTrip.RadarTripStatus status;
+        if (statusStr != null) {
+          if (statusStr.equalsIgnoreCase("started")) {
+            status = RadarTrip.RadarTripStatus.STARTED;
+          } else if (statusStr.equalsIgnoreCase("approaching")) {
+            status = RadarTrip.RadarTripStatus.APPROACHING;
+          } else if (statusStr.equalsIgnoreCase("arrived")) {
+            status = RadarTrip.RadarTripStatus.ARRIVED;
+          } else if (statusStr.equalsIgnoreCase("completed")) {
+            status = RadarTrip.RadarTripStatus.COMPLETED;
+          } else if (statusStr.equalsIgnoreCase("canceled")) {
+            status = RadarTrip.RadarTripStatus.CANCELED;
+          }
         }
-        
+
         Radar.updateTrip(options, status);
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
@@ -777,7 +787,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             JSONObject originObj = optionsObj.getJSONObject("origin");
             double originLatitude = originObj.getDouble("latitude");
             double originLongitude = originObj.getDouble("longitude");
-            origin = new Location("RNRadarModule");
+            Location origin = new Location("RNRadarModule");
             origin.setLatitude(originLatitude);
             origin.setLongitude(originLongitude);
         }
@@ -851,7 +861,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
         Radar.getMatrix(origins, destinations, mode, units, new Radar.RadarMatrixCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status, RadarRouteMatrix routes) {
+            public void onComplete(Radar.RadarStatus status, RadarRouteMatrix matrix) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());

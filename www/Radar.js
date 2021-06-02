@@ -107,6 +107,14 @@ const startTrip = (options, callback) => {
   exec('startTrip', [options], callback);
 };
 
+const updateTrip = (options, callback) => {
+  exec('updateTrip', [options], callback);
+};
+
+const getTripOptions = (callback) => {
+  exec('getTripOptions', null, callback);
+};
+
 const completeTrip = () => {
   exec('completeTrip');
 };
@@ -155,6 +163,10 @@ const getDistance = (options, callback) => {
   exec('getDistance', [options], callback);
 };
 
+const getMatrix = (options, callback) => {
+  exec('getMatrix', [options], callback);
+};
+
 const startForegroundService = (args, callback) => {
   exec('startForegroundService', [args.title || '', args.text || '', args.icon || '', args.importance || '1', args.notificationId || ''], callback);
 };
@@ -186,6 +198,8 @@ const Radar = {
   offClientLocation,
   offError,
   startTrip,
+  updateTrip,
+  getTripOptions,
   completeTrip,
   cancelTrip,
   getContext,
@@ -196,6 +210,7 @@ const Radar = {
   reverseGeocode,
   ipGeocode,
   getDistance,
+  getMatrix,
   startForegroundService,
   stopForegroundService
 };

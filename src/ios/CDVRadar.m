@@ -352,6 +352,17 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)getTripOptions:(CDVInvokedUrlCommand *)command {
+    RadarTripOptions *options = [Radar getTripOptions];
+    NSDictionary *optionsDict;
+    if (options) {
+      optionsDict = [options dictionaryValue];
+    }
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:optionsDict];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)completeTrip:(CDVInvokedUrlCommand *)command {
     [Radar completeTrip];
 
