@@ -827,7 +827,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             JSONObject originObj = originsArr.getJSONObject(i);
             double originLatitude = originObj.getDouble("latitude");
             double originLongitude = originObj.getDouble("longitude");
-            origin = new Location("RadarCordovaPlugin");
+            Location origin = new Location("RadarCordovaPlugin");
             origin.setLatitude(originLatitude);
             origin.setLongitude(originLongitude);
             origins[i] = origin;
