@@ -486,12 +486,12 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public void updateTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         final JSONObject optionsObj = args.getJSONObject(0);
-
         JSONObject tripOptionsObj = optionsObj.getJSONObject("options");
-        String statusStr = optionsObj.getString("status");
 
         RadarTripOptions options = RadarTripOptions.fromJson(tripOptionsObj);
-        RadarTrip.RadarTripStatus status;
+        RadarTrip.RadarTripStatus status = RadarTrip.RadarTripStatus.UNKNOWN;
+
+        String statusStr = optionsObj.getString("status");
         if (statusStr != null) {
           if (statusStr.equalsIgnoreCase("started")) {
             status = RadarTrip.RadarTripStatus.STARTED;
