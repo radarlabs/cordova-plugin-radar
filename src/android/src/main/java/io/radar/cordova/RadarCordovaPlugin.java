@@ -491,18 +491,20 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         RadarTripOptions options = RadarTripOptions.fromJson(tripOptionsObj);
         RadarTrip.RadarTripStatus status = RadarTrip.RadarTripStatus.UNKNOWN;
 
-        String statusStr = optionsObj.getString("status");
-        if (statusStr != null) {
-          if (statusStr.equalsIgnoreCase("started")) {
-            status = RadarTrip.RadarTripStatus.STARTED;
-          } else if (statusStr.equalsIgnoreCase("approaching")) {
-            status = RadarTrip.RadarTripStatus.APPROACHING;
-          } else if (statusStr.equalsIgnoreCase("arrived")) {
-            status = RadarTrip.RadarTripStatus.ARRIVED;
-          } else if (statusStr.equalsIgnoreCase("completed")) {
-            status = RadarTrip.RadarTripStatus.COMPLETED;
-          } else if (statusStr.equalsIgnoreCase("canceled")) {
-            status = RadarTrip.RadarTripStatus.CANCELED;
+        if (optionsObj.has("status")) {
+          String statusStr = optionsObj.getString("status");
+          if (statusStr != null) {
+            if (statusStr.equalsIgnoreCase("started")) {
+              status = RadarTrip.RadarTripStatus.STARTED;
+            } else if (statusStr.equalsIgnoreCase("approaching")) {
+              status = RadarTrip.RadarTripStatus.APPROACHING;
+            } else if (statusStr.equalsIgnoreCase("arrived")) {
+              status = RadarTrip.RadarTripStatus.ARRIVED;
+            } else if (statusStr.equalsIgnoreCase("completed")) {
+              status = RadarTrip.RadarTripStatus.COMPLETED;
+            } else if (statusStr.equalsIgnoreCase("canceled")) {
+              status = RadarTrip.RadarTripStatus.CANCELED;
+            }
           }
         }
 
@@ -787,7 +789,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             JSONObject originObj = optionsObj.getJSONObject("origin");
             double originLatitude = originObj.getDouble("latitude");
             double originLongitude = originObj.getDouble("longitude");
-            Location origin = new Location("RNRadarModule");
+            origin = new Location("RNRadarModule");
             origin.setLatitude(originLatitude);
             origin.setLongitude(originLongitude);
         }
