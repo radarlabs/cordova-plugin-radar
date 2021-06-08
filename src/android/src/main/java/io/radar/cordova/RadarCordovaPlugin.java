@@ -36,6 +36,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.annotation.TargetApi;
 
+import androidx.annotation.NonNull;
+
 public class RadarCordovaPlugin extends CordovaPlugin {
 
     private static CallbackContext eventsCallbackContext;
@@ -469,7 +471,16 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         final JSONObject optionsObj = args.getJSONObject(0);
 
         RadarTripOptions options = RadarTripOptions.fromJson(optionsObj);
-        Radar.startTrip(options);
+        Radar.startTrip(options,new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus radarStatus) {
+                if (radarStatus == Radar.RadarStatus.SUCCESS) {
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+                } else {
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR,radarStatus.toString()));
+                }
+            }
+        });
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
@@ -477,7 +488,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void getTripOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
       RadarTripOptions tripOptions = Radar.getTripOptions();
       JSONObject tripOptionsObj = new JSONObject();
-      if (tripOptionsObj != null) {
+      if (tripOptions != null) {
         tripOptionsObj = tripOptions.toJson(); 
       }
       PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, tripOptionsObj);
@@ -508,21 +519,42 @@ public class RadarCordovaPlugin extends CordovaPlugin {
           }
         }
 
-        Radar.updateTrip(options, status);
-
-        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+        Radar.updateTrip(options, status, new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus radarStatus) {
+                if (radarStatus == Radar.RadarStatus.SUCCESS) {
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK,radarStatus.toString()));
+                } else {
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR,radarStatus.toString()));
+                }
+            }
+        });
     }
 
     public void completeTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Radar.completeTrip();
-
-        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+        Radar.completeTrip(new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus radarStatus) {
+                if (radarStatus == Radar.RadarStatus.SUCCESS) {
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK,radarStatus.toString()));
+                } else {
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR,radarStatus.toString()));
+                }
+            }
+        });
     }
 
     public void cancelTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Radar.cancelTrip();
-
-        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+        Radar.cancelTrip(new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(@NonNull Radar.RadarStatus radarStatus) {
+                if (radarStatus == Radar.RadarStatus.SUCCESS) {
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK,radarStatus.toString()));
+                } else {
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR,radarStatus.toString()));
+                }
+            }
+        });
     }
 
     public void getContext(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
