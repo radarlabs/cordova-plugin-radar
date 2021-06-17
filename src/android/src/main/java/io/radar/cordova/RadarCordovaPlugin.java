@@ -467,7 +467,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public void getTripOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         RadarTripOptions options = Radar.getTripOptions();
-        JSONObject optionsObj;
+        JSONObject optionsObj = null;
         if (options != null) {
             optionsObj = options.toJson(); 
         }
@@ -483,10 +483,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         Radar.startTrip(options, new Radar.RadarTripCallback() {
             @Override
             public void onComplete(Radar.RadarStatus status) {
-                JSONObject obj = new JSONObject();
-                obj.put("status", status.toString());
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
 
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
             }
         });
 
@@ -521,10 +526,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         Radar.updateTrip(options, status, new Radar.RadarTripCallback() {
             @Override
             public void onComplete(Radar.RadarStatus status) {
-                JSONObject obj = new JSONObject();
-                obj.put("status", status.toString());
-                
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+                    
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
             }
         });
     }
@@ -533,10 +543,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         Radar.completeTrip(new Radar.RadarTripCallback() {
             @Override
             public void onComplete(Radar.RadarStatus status) {
-                JSONObject obj = new JSONObject();
-                obj.put("status", status.toString());
-                
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+                    
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
             }
         });
     }
@@ -545,10 +560,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         Radar.cancelTrip(new Radar.RadarTripCallback() {
             @Override
             public void onComplete(Radar.RadarStatus status) {
-                JSONObject obj = new JSONObject();
-                obj.put("status", status.toString());
-                
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+                    
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
             }
         });
     }
