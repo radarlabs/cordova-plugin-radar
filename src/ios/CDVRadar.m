@@ -686,7 +686,7 @@
     [self.commandDelegate runInBackground:^{
         NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
 
-        NSMutableDictionary *origins = [NSMutableDictionary new];
+        NSMutableArray *origins = [NSMutableArray new];
         NSArray *originsArr = optionsDict[@"origins"];
         if (originsArr) {
             for (NSDictionary *originDict in originsArr) {
@@ -698,10 +698,10 @@
                 [origins addObject:origin];
             }
         }
-        NSMutableDictionary *destinations = [NSMutableDictionary new];
+        NSMutableArray *destinations = [NSMutableArray new];
         NSArray *destinationsArr = optionsDict[@"destinations"];
         if (destinationsArr) {
-            for (NSDictionary *destinationDict in originsArr) {
+            for (NSDictionary *destinationDict in destinationsArr) {
                 NSNumber *destinationLatitudeNumber = destinationDict[@"latitude"];
                 NSNumber *destinationLongitudeNumber = destinationDict[@"longitude"];
                 double destinationLatitude = [destinationLatitudeNumber doubleValue];
@@ -737,7 +737,7 @@
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
             if (matrix) {
-                [dict setObject:[matrix dictionaryValue] forKey:@"matrix"];
+                [dict setObject:[matrix arrayValue] forKey:@"matrix"];
             }
 
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
