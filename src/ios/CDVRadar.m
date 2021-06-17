@@ -682,4 +682,68 @@
     }];
 }
 
+- (void)getMatrix:(CDVInvokedUrlCommand *)command {
+    [self.commandDelegate runInBackground:^{
+        NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
+
+        NSMutableDictionary *origins = [NSMutableDictionary new];
+        NSArray *originsArr = optionsDict[@"origins"];
+        if (originsArr) {
+            for (NSDictionary *originDict in originsArr) {
+                NSNumber *originLatitudeNumber = originDict[@"latitude"];
+                NSNumber *originLongitudeNumber = originDict[@"longitude"];
+                double originLatitude = [originLatitudeNumber doubleValue];
+                double originLongitude = [originLongitudeNumber doubleValue];
+                CLLocation *origin = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(originLatitude, originLongitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
+                [origins addObject:origin];
+            }
+        }
+        NSMutableDictionary *destinations = [NSMutableDictionary new];
+        NSArray *destinationsArr = optionsDict[@"destinations"];
+        if (destinationsArr) {
+            for (NSDictionary *destinationDict in originsArr) {
+                NSNumber *destinationLatitudeNumber = destinationDict[@"latitude"];
+                NSNumber *destinationLongitudeNumber = destinationDict[@"longitude"];
+                double destinationLatitude = [destinationLatitudeNumber doubleValue];
+                double destinationLongitude = [destinationLongitudeNumber doubleValue];
+                CLLocation *destination = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
+                [destinations addObject:destination];
+            }
+        }
+        RadarRouteMode mode = RadarRouteModeCar;
+        NSString *modeStr = optionsDict[@"mode"];
+        if (modeStr != nil) {
+            if ([modeStr isEqualToString:@"FOOT"] || [modeStr isEqualToString:@"foot"]) {
+                mode = RadarRouteModeFoot;
+            } else if ([modeStr isEqualToString:@"BIKE"] || [modeStr isEqualToString:@"bike"]) {
+                mode = RadarRouteModeBike;
+            } else if ([modeStr isEqualToString:@"CAR"] || [modeStr isEqualToString:@"car"]) {
+                mode = RadarRouteModeCar;
+            } else if ([modeStr isEqualToString:@"TRUCK"] || [modeStr isEqualToString:@"truck"]) {
+                mode = RadarRouteModeTruck;
+            } else if ([modeStr isEqualToString:@"MOTORBIKE"] || [modeStr isEqualToString:@"motorbike"]) {
+                mode = RadarRouteModeMotorbike;
+            }
+        }
+        NSString *unitsStr = optionsDict[@"units"];
+        RadarRouteUnits units;
+        if (unitsStr != nil && [unitsStr isKindOfClass:[NSString class]]) {
+            units = [unitsStr isEqualToString:@"METRIC"] || [unitsStr isEqualToString:@"metric"] ? RadarRouteUnitsMetric : RadarRouteUnitsImperial;
+        } else {
+            units = RadarRouteUnitsImperial;
+        }
+
+        [Radar getMatrixFromOrigins:origins destinations:destinations mode:mode units:units completionHandler:^(RadarStatus status, RadarRouteMatrix * _Nullable matrix) {
+            NSMutableDictionary *dict = [NSMutableDictionary new];
+            [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
+            if (matrix) {
+                [dict setObject:[matrix dictionaryValue] forKey:@"matrix"];
+            }
+
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }];
+    }];
+}
+
 @end
