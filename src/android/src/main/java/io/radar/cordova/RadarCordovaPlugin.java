@@ -27,7 +27,9 @@ import io.radar.sdk.model.RadarContext;
 import io.radar.sdk.model.RadarEvent;
 import io.radar.sdk.model.RadarGeofence;
 import io.radar.sdk.model.RadarPlace;
+import io.radar.sdk.model.RadarRouteMatrix;
 import io.radar.sdk.model.RadarRoutes;
+import io.radar.sdk.model.RadarTrip;
 import io.radar.sdk.model.RadarUser;
 
 import android.app.Activity;
@@ -85,8 +87,12 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 offClientLocation(args, callbackContext);
             } else if (action.equals("offError")) {
                 offError(args, callbackContext);
+            } else if (action.equals("getTripOptions")) {
+                getTripOptions(args, callbackContext);
             } else if (action.equals("startTrip")) {
                 startTrip(args, callbackContext);
+            } else if (action.equals("updateTrip")) {
+                updateTrip(args, callbackContext);
             } else if (action.equals("completeTrip")) {
                 completeTrip(args, callbackContext);
             } else if (action.equals("cancelTrip")) {
@@ -107,6 +113,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 ipGeocode(args, callbackContext);
             } else if (action.equals("getDistance")) {
                 getDistance(args, callbackContext);
+            } else if (action.equals("getMatrix")) {
+                getMatrix(args, callbackContext);
             } else if (action.equals("startForegroundService")) {
                 startForegroundService(args, callbackContext);
             } else if (action.equals("stopForegroundService")) {
@@ -457,25 +465,112 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         RadarCordovaPlugin.errorCallbackContext = null;
     }
 
+    public void getTripOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        RadarTripOptions options = Radar.getTripOptions();
+        JSONObject optionsObj = null;
+        if (options != null) {
+            optionsObj = options.toJson(); 
+        }
+
+        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, optionsObj);
+        callbackContext.sendPluginResult(pluginResult);
+    }
+
     public void startTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         final JSONObject optionsObj = args.getJSONObject(0);
 
         RadarTripOptions options = RadarTripOptions.fromJson(optionsObj);
-        Radar.startTrip(options);
+        Radar.startTrip(options, new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(Radar.RadarStatus status) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
+            }
+        });
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+    }
+
+    public void updateTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final JSONObject optionsObj = args.getJSONObject(0);
+
+        JSONObject tripOptionsObj = optionsObj.getJSONObject("options");
+
+        RadarTripOptions options = RadarTripOptions.fromJson(tripOptionsObj);
+        RadarTrip.RadarTripStatus status = RadarTrip.RadarTripStatus.UNKNOWN;
+
+        if (optionsObj.has("status")) {
+            String statusStr = optionsObj.getString("status");
+            if (statusStr != null) {
+                if (statusStr.equalsIgnoreCase("started")) {
+                    status = RadarTrip.RadarTripStatus.STARTED;
+                } else if (statusStr.equalsIgnoreCase("approaching")) {
+                    status = RadarTrip.RadarTripStatus.APPROACHING;
+                } else if (statusStr.equalsIgnoreCase("arrived")) {
+                    status = RadarTrip.RadarTripStatus.ARRIVED;
+                } else if (statusStr.equalsIgnoreCase("completed")) {
+                    status = RadarTrip.RadarTripStatus.COMPLETED;
+                } else if (statusStr.equalsIgnoreCase("canceled")) {
+                    status = RadarTrip.RadarTripStatus.CANCELED;
+                }
+            }
+        }
+
+        Radar.updateTrip(options, status, new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(Radar.RadarStatus status) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+                    
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
+            }
+        });
     }
 
     public void completeTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Radar.completeTrip();
-
-        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+        Radar.completeTrip(new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(Radar.RadarStatus status) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+                    
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
+            }
+        });
     }
 
     public void cancelTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Radar.cancelTrip();
-
-        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+        Radar.cancelTrip(new Radar.RadarTripCallback() {
+            @Override
+            public void onComplete(Radar.RadarStatus status) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+                    
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
+            }
+        });
     }
 
     public void getContext(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
@@ -763,6 +858,12 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         if (modesList.contains("CAR") || modesList.contains("car")) {
             modes.add(Radar.RadarRouteMode.CAR);
         }
+        if (modesList.contains("TRUCK") || modesList.contains("truck")) {
+            modes.add(Radar.RadarRouteMode.TRUCK);
+        }
+        if (modesList.contains("MOTORBIKE") || modesList.contains("motorbike")) {
+            modes.add(Radar.RadarRouteMode.MOTORBIKE);
+        }
         String unitsStr = optionsObj.getString("units");
         Radar.RadarRouteUnits units = unitsStr.equals("METRIC") || unitsStr.equals("metric") ? Radar.RadarRouteUnits.METRIC : Radar.RadarRouteUnits.IMPERIAL;
 
@@ -771,6 +872,66 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         } else {
             Radar.getDistance(destination, modes, units, callback);
         }
+    }
+
+    public void getMatrix(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final JSONObject optionsObj = args.getJSONObject(0);
+
+        JSONArray originsArr = optionsObj.getJSONArray("origins");
+        Location[] origins = new Location[originsArr.length()];
+        for (int i = 0; i < originsArr.length(); i++) {
+            JSONObject originObj = originsArr.getJSONObject(i);
+            double originLatitude = originObj.getDouble("latitude");
+            double originLongitude = originObj.getDouble("longitude");
+            Location origin = new Location("RadarCordovaPlugin");
+            origin.setLatitude(originLatitude);
+            origin.setLongitude(originLongitude);
+            origins[i] = origin;
+        }
+        JSONArray destinationsArr = optionsObj.getJSONArray("destinations");
+        Location[] destinations = new Location[destinationsArr.length()];
+        for (int i = 0; i < destinationsArr.length(); i++) {
+            JSONObject destinationObj = destinationsArr.getJSONObject(i);
+            double destinationLatitude = destinationObj.getDouble("latitude");
+            double destinationLongitude = destinationObj.getDouble("longitude");
+            Location destination = new Location("RadarCordovaPlugin");
+            destination.setLatitude(destinationLatitude);
+            destination.setLongitude(destinationLongitude);
+            destinations[i] = destination;
+        }
+        Radar.RadarRouteMode mode = Radar.RadarRouteMode.CAR;
+        String modeStr = optionsObj.getString("mode");
+        if (modeStr.equals("FOOT") || modeStr.equals("foot")) {
+            mode = Radar.RadarRouteMode.FOOT;
+        } else if (modeStr.equals("BIKE") || modeStr.equals("bike")) {
+            mode = Radar.RadarRouteMode.BIKE;
+        } else if (modeStr.equals("CAR") || modeStr.equals("car")) {
+            mode = Radar.RadarRouteMode.CAR;
+        } else if (modeStr.equals("TRUCK") || modeStr.equals("truck")) {
+            mode = Radar.RadarRouteMode.TRUCK;
+        } else if (modeStr.equals("MOTORBIKE") || modeStr.equals("motorbike")) {
+            mode = Radar.RadarRouteMode.MOTORBIKE;
+        }
+        String unitsStr = optionsObj.getString("units");
+        Radar.RadarRouteUnits units = unitsStr.equals("METRIC") || unitsStr.equals("metric") ? Radar.RadarRouteUnits.METRIC : Radar.RadarRouteUnits.IMPERIAL;
+
+        Radar.getMatrix(origins, destinations, mode, units, new Radar.RadarMatrixCallback() {
+            @Override
+            public void onComplete(Radar.RadarStatus status, RadarRouteMatrix matrix) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+                    if (matrix != null) {
+                        obj.put("matrix", matrix.toJson());
+                    }
+
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
+            }
+        });
     }
 
     public void startForegroundService(final JSONArray args, final CallbackContext callbackContext) throws JSONException {

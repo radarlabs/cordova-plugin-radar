@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
         id="cordova-plugin-radar"
-        version="1.0.0">
+        version="3.1.1">
     <name>Radar</name>
     <js-module src="www/Radar.js" name="Radar">
         <clobbers target="cordova.plugins.radar"/>
@@ -41,7 +41,7 @@
         <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java" target-dir="src/android/src/main/java/io/radar/cordova"/>
         <source-file src="src/android/src/main/java/io/radar/cordova/RadarForegroundService.java" target-dir="src/android/src/main/java/io/radar/cordova"/>
 
-        <framework src="io.radar:sdk:3.1.3"/>
+        <framework src="io.radar:sdk:3.1.8"/>
 
     </platform>
     <platform name="ios">
@@ -69,6 +69,6 @@
 
         <header-file src="src/ios/CDVRadar.h"/>
         <source-file src="src/ios/CDVRadar.m"/>
-        <framework src="RadarSDK" type="podspec" spec="3.1.2"/>
+        <framework src="RadarSDK" type="podspec" spec="3.1.8"/>
     </platform>
 </plugin>

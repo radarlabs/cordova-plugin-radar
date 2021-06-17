@@ -314,28 +314,79 @@
     errorCallbackId = nil;
 }
 
+- (void)getTripOptions:(CDVInvokedUrlCommand *)command {
+    RadarTripOptions *options = [Radar getTripOptions];
+    NSDictionary *optionsDict;
+    if (options) {
+      optionsDict = [options dictionaryValue];
+    }
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:optionsDict];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)startTrip:(CDVInvokedUrlCommand *)command {
     NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
 
     RadarTripOptions *options = [RadarTripOptions tripOptionsFromDictionary:optionsDict];
-    [Radar startTripWithOptions:options];
+    [Radar startTripWithOptions:options completionHandler:^(RadarStatus status) {
+        NSMutableDictionary *dict = [NSMutableDictionary new];
+        [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
 
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
+- (void)updateTrip:(CDVInvokedUrlCommand *)command {
+    NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
+
+    NSDictionary *tripOptionsDict = optionsDict[@"options"];
+    NSString *statusStr = optionsDict[@"status"];
+
+    RadarTripOptions *options = [RadarTripOptions tripOptionsFromDictionary:tripOptionsDict];
+    RadarTripStatus status = RadarTripStatusUnknown;
+    if (statusStr) {
+        if ([statusStr isEqualToString:@"started"]) {
+            status = RadarTripStatusStarted;
+        } else if ([statusStr isEqualToString:@"approaching"]) {
+            status = RadarTripStatusApproaching;
+        } else if ([statusStr isEqualToString:@"arrived"]) {
+            status = RadarTripStatusArrived;
+        } else if ([statusStr isEqualToString:@"completed"]) {
+            status = RadarTripStatusCompleted;
+        } else if ([statusStr isEqualToString:@"canceled"]) {
+            status = RadarTripStatusCanceled;
+        }
+    }
+    
+    [Radar updateTripWithOptions:options status:status completionHandler:^(RadarStatus status) {
+        NSMutableDictionary *dict = [NSMutableDictionary new];
+        [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
 }
 
 - (void)completeTrip:(CDVInvokedUrlCommand *)command {
-    [Radar completeTrip];
+    [Radar completeTripWithCompletionHandler:^(RadarStatus status) {
+        NSMutableDictionary *dict = [NSMutableDictionary new];
+        [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
 
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
 }
 
 - (void)cancelTrip:(CDVInvokedUrlCommand *)command {
-    [Radar cancelTrip];
+    [Radar cancelTripWithCompletionHandler:^(RadarStatus status) {
+        NSMutableDictionary *dict = [NSMutableDictionary new];
+        [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
 
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
 }
 
 - (void)getContext:(CDVInvokedUrlCommand *)command {
@@ -628,6 +679,70 @@
         } else {
             [Radar getDistanceToDestination:destination modes:modes units:units completionHandler:completionHandler];
         }
+    }];
+}
+
+- (void)getMatrix:(CDVInvokedUrlCommand *)command {
+    [self.commandDelegate runInBackground:^{
+        NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
+
+        NSMutableArray *origins = [NSMutableArray new];
+        NSArray *originsArr = optionsDict[@"origins"];
+        if (originsArr) {
+            for (NSDictionary *originDict in originsArr) {
+                NSNumber *originLatitudeNumber = originDict[@"latitude"];
+                NSNumber *originLongitudeNumber = originDict[@"longitude"];
+                double originLatitude = [originLatitudeNumber doubleValue];
+                double originLongitude = [originLongitudeNumber doubleValue];
+                CLLocation *origin = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(originLatitude, originLongitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
+                [origins addObject:origin];
+            }
+        }
+        NSMutableArray *destinations = [NSMutableArray new];
+        NSArray *destinationsArr = optionsDict[@"destinations"];
+        if (destinationsArr) {
+            for (NSDictionary *destinationDict in destinationsArr) {
+                NSNumber *destinationLatitudeNumber = destinationDict[@"latitude"];
+                NSNumber *destinationLongitudeNumber = destinationDict[@"longitude"];
+                double destinationLatitude = [destinationLatitudeNumber doubleValue];
+                double destinationLongitude = [destinationLongitudeNumber doubleValue];
+                CLLocation *destination = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(destinationLatitude, destinationLongitude) altitude:-1 horizontalAccuracy:5 verticalAccuracy:-1 timestamp:[NSDate date]];
+                [destinations addObject:destination];
+            }
+        }
+        RadarRouteMode mode = RadarRouteModeCar;
+        NSString *modeStr = optionsDict[@"mode"];
+        if (modeStr != nil) {
+            if ([modeStr isEqualToString:@"FOOT"] || [modeStr isEqualToString:@"foot"]) {
+                mode = RadarRouteModeFoot;
+            } else if ([modeStr isEqualToString:@"BIKE"] || [modeStr isEqualToString:@"bike"]) {
+                mode = RadarRouteModeBike;
+            } else if ([modeStr isEqualToString:@"CAR"] || [modeStr isEqualToString:@"car"]) {
+                mode = RadarRouteModeCar;
+            } else if ([modeStr isEqualToString:@"TRUCK"] || [modeStr isEqualToString:@"truck"]) {
+                mode = RadarRouteModeTruck;
+            } else if ([modeStr isEqualToString:@"MOTORBIKE"] || [modeStr isEqualToString:@"motorbike"]) {
+                mode = RadarRouteModeMotorbike;
+            }
+        }
+        NSString *unitsStr = optionsDict[@"units"];
+        RadarRouteUnits units;
+        if (unitsStr != nil && [unitsStr isKindOfClass:[NSString class]]) {
+            units = [unitsStr isEqualToString:@"METRIC"] || [unitsStr isEqualToString:@"metric"] ? RadarRouteUnitsMetric : RadarRouteUnitsImperial;
+        } else {
+            units = RadarRouteUnitsImperial;
+        }
+
+        [Radar getMatrixFromOrigins:origins destinations:destinations mode:mode units:units completionHandler:^(RadarStatus status, RadarRouteMatrix * _Nullable matrix) {
+            NSMutableDictionary *dict = [NSMutableDictionary new];
+            [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
+            if (matrix) {
+                [dict setObject:[matrix arrayValue] forKey:@"matrix"];
+            }
+
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }];
     }];
 }
 

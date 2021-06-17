@@ -103,16 +103,24 @@ const offError = () => {
   exec('offEvents');
 };
 
+const getTripOptions = (callback) => {
+  exec('getTripOptions', null, callback);
+};
+
 const startTrip = (options, callback) => {
   exec('startTrip', [options], callback);
 };
 
-const completeTrip = () => {
-  exec('completeTrip');
+const updateTrip = (options, callback) => {
+  exec('updateTrip', [options], callback);
 };
 
-const cancelTrip = () => {
-  exec('cancelTrip');
+const completeTrip = (callback) => {
+  exec('completeTrip', null, callback);
+};
+
+const cancelTrip = (callback) => {
+  exec('cancelTrip', null, callback);
 };
 
 const getContext = (arg1, arg2) => {
@@ -155,6 +163,10 @@ const getDistance = (options, callback) => {
   exec('getDistance', [options], callback);
 };
 
+const getMatrix = (options, callback) => {
+  exec('getMatrix', [options], callback);
+};
+
 const startForegroundService = (args, callback) => {
   exec('startForegroundService', [args.title || '', args.text || '', args.icon || '', args.importance || '1', args.notificationId || ''], callback);
 };
@@ -185,7 +197,9 @@ const Radar = {
   offLocation,
   offClientLocation,
   offError,
+  getTripOptions,
   startTrip,
+  updateTrip,
   completeTrip,
   cancelTrip,
   getContext,
@@ -196,6 +210,7 @@ const Radar = {
   reverseGeocode,
   ipGeocode,
   getDistance,
+  getMatrix,
   startForegroundService,
   stopForegroundService
 };
