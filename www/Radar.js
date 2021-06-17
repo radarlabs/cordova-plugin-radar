@@ -103,6 +103,10 @@ const offError = () => {
   exec('offEvents');
 };
 
+const getTripOptions = (callback) => {
+  exec('getTripOptions', null, callback);
+};
+
 const startTrip = (options, callback) => {
   exec('startTrip', [options], callback);
 };
@@ -111,16 +115,12 @@ const updateTrip = (options, callback) => {
   exec('updateTrip', [options], callback);
 };
 
-const getTripOptions = (callback) => {
-  exec('getTripOptions', null, callback);
+const completeTrip = (callback) => {
+  exec('completeTrip', null, callback);
 };
 
-const completeTrip = () => {
-  exec('completeTrip');
-};
-
-const cancelTrip = () => {
-  exec('cancelTrip');
+const cancelTrip = (callback) => {
+  exec('cancelTrip', null, callback);
 };
 
 const getContext = (arg1, arg2) => {
@@ -197,9 +197,9 @@ const Radar = {
   offLocation,
   offClientLocation,
   offError,
+  getTripOptions,
   startTrip,
   updateTrip,
-  getTripOptions,
   completeTrip,
   cancelTrip,
   getContext,

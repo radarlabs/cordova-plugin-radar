@@ -36,8 +36,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.annotation.TargetApi;
 
-import androidx.annotation.NonNull;
-
 public class RadarCordovaPlugin extends CordovaPlugin {
 
     private static CallbackContext eventsCallbackContext;
@@ -89,10 +87,10 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 offClientLocation(args, callbackContext);
             } else if (action.equals("offError")) {
                 offError(args, callbackContext);
-            } else if (action.equals("startTrip")) {
-              startTrip(args, callbackContext);
             } else if (action.equals("getTripOptions")) {
-              getTripOptions(args, callbackContext);
+                getTripOptions(args, callbackContext);
+            } else if (action.equals("startTrip")) {
+                startTrip(args, callbackContext);
             } else if (action.equals("updateTrip")) {
                 updateTrip(args, callbackContext);
             } else if (action.equals("completeTrip")) {
@@ -467,66 +465,66 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         RadarCordovaPlugin.errorCallbackContext = null;
     }
 
+    public void getTripOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        RadarTripOptions options = Radar.getTripOptions();
+        JSONObject optionsObj;
+        if (options != null) {
+            optionsObj = options.toJson(); 
+        }
+
+        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, optionsObj);
+        callbackContext.sendPluginResult(pluginResult);
+    }
+
     public void startTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         final JSONObject optionsObj = args.getJSONObject(0);
 
         RadarTripOptions options = RadarTripOptions.fromJson(optionsObj);
-        Radar.startTrip(options,new Radar.RadarTripCallback() {
+        Radar.startTrip(options, new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(@NonNull Radar.RadarStatus radarStatus) {
-                if (radarStatus == Radar.RadarStatus.SUCCESS) {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
-                } else {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR,radarStatus.toString()));
-                }
+            public void onComplete(Radar.RadarStatus status) {
+                JSONObject obj = new JSONObject();
+                obj.put("status", status.toString());
+
+                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
             }
         });
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 
-    public void getTripOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-      RadarTripOptions tripOptions = Radar.getTripOptions();
-      JSONObject tripOptionsObj = new JSONObject();
-      if (tripOptions != null) {
-        tripOptionsObj = tripOptions.toJson(); 
-      }
-      PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, tripOptionsObj);
-      callbackContext.sendPluginResult(pluginResult);
-    }
-
     public void updateTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         final JSONObject optionsObj = args.getJSONObject(0);
+
         JSONObject tripOptionsObj = optionsObj.getJSONObject("options");
 
         RadarTripOptions options = RadarTripOptions.fromJson(tripOptionsObj);
         RadarTrip.RadarTripStatus status = RadarTrip.RadarTripStatus.UNKNOWN;
 
         if (optionsObj.has("status")) {
-          String statusStr = optionsObj.getString("status");
-          if (statusStr != null) {
-            if (statusStr.equalsIgnoreCase("started")) {
-              status = RadarTrip.RadarTripStatus.STARTED;
-            } else if (statusStr.equalsIgnoreCase("approaching")) {
-              status = RadarTrip.RadarTripStatus.APPROACHING;
-            } else if (statusStr.equalsIgnoreCase("arrived")) {
-              status = RadarTrip.RadarTripStatus.ARRIVED;
-            } else if (statusStr.equalsIgnoreCase("completed")) {
-              status = RadarTrip.RadarTripStatus.COMPLETED;
-            } else if (statusStr.equalsIgnoreCase("canceled")) {
-              status = RadarTrip.RadarTripStatus.CANCELED;
+            String statusStr = optionsObj.getString("status");
+            if (statusStr != null) {
+                if (statusStr.equalsIgnoreCase("started")) {
+                    status = RadarTrip.RadarTripStatus.STARTED;
+                } else if (statusStr.equalsIgnoreCase("approaching")) {
+                    status = RadarTrip.RadarTripStatus.APPROACHING;
+                } else if (statusStr.equalsIgnoreCase("arrived")) {
+                    status = RadarTrip.RadarTripStatus.ARRIVED;
+                } else if (statusStr.equalsIgnoreCase("completed")) {
+                    status = RadarTrip.RadarTripStatus.COMPLETED;
+                } else if (statusStr.equalsIgnoreCase("canceled")) {
+                    status = RadarTrip.RadarTripStatus.CANCELED;
+                }
             }
-          }
         }
 
         Radar.updateTrip(options, status, new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(@NonNull Radar.RadarStatus radarStatus) {
-                if (radarStatus == Radar.RadarStatus.SUCCESS) {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK,radarStatus.toString()));
-                } else {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR,radarStatus.toString()));
-                }
+            public void onComplete(Radar.RadarStatus status) {
+                JSONObject obj = new JSONObject();
+                obj.put("status", status.toString());
+                
+                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
             }
         });
     }
@@ -534,12 +532,11 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void completeTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.completeTrip(new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(@NonNull Radar.RadarStatus radarStatus) {
-                if (radarStatus == Radar.RadarStatus.SUCCESS) {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK,radarStatus.toString()));
-                } else {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR,radarStatus.toString()));
-                }
+            public void onComplete(Radar.RadarStatus status) {
+                JSONObject obj = new JSONObject();
+                obj.put("status", status.toString());
+                
+                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
             }
         });
     }
@@ -547,12 +544,11 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void cancelTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.cancelTrip(new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(@NonNull Radar.RadarStatus radarStatus) {
-                if (radarStatus == Radar.RadarStatus.SUCCESS) {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK,radarStatus.toString()));
-                } else {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR,radarStatus.toString()));
-                }
+            public void onComplete(Radar.RadarStatus status) {
+                JSONObject obj = new JSONObject();
+                obj.put("status", status.toString());
+                
+                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
             }
         });
     }
