@@ -9,6 +9,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.IBinder;
 import android.os.Bundle;
+import android.util.Log;
 import android.annotation.TargetApi;
 
 public class RadarForegroundService extends Service {
@@ -16,11 +17,15 @@ public class RadarForegroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            if (intent.getAction().equals("start")) {
-                startPluginForegroundService(intent.getExtras());
-            } else if (intent.getAction().equals("stop")) {
-                stopForeground(true);
-                stopSelf();
+            try {
+                if (intent.getAction().equals("start")) {
+                    startPluginForegroundService(intent.getExtras());
+                } else if (intent.getAction().equals("stop")) {
+                    stopForeground(true);
+                    stopSelf();
+                }
+            } catch (Exception e) {
+                Log.e("RadarForegroundService", "Exception", e);
             }
         }
 
