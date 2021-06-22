@@ -69,6 +69,6 @@
 
         <header-file src="src/ios/CDVRadar.h"/>
         <source-file src="src/ios/CDVRadar.m"/>
-        <framework src="RadarSDK" type="podspec" spec="3.1.8"/>
+        <pod name="RadarSDK" spec="~> 3.1.8"/>
     </platform>
 </plugin>
