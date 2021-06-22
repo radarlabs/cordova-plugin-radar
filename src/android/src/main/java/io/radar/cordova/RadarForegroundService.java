@@ -27,7 +27,6 @@ public class RadarForegroundService extends Service {
             } catch (Exception e) {
                 Log.e("RadarForegroundService", "Exception", e);
             }
-            
         }
 
         return START_STICKY;
