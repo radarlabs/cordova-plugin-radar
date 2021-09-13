@@ -69,6 +69,14 @@
 
         <header-file src="src/ios/CDVRadar.h"/>
         <source-file src="src/ios/CDVRadar.m"/>
-        <framework src="RadarSDK" type="podspec" spec="3.1.8"/>
+        
+        <podspec>
+            <config>
+                <source url="https://cdn.cocoapods.org/"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="RadarSDK" spec="~> 3.1.10"/>
+            </pods>
+        </podspec>
     </platform>
 </plugin>
