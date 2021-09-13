@@ -31,7 +31,7 @@
         </edit-config>
 
         <config-file target="AndroidManifest.xml" parent="/*">
-            <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" tools:node="remove" />
+            <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/*">
@@ -41,7 +41,7 @@
         <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java" target-dir="src/android/src/main/java/io/radar/cordova"/>
         <source-file src="src/android/src/main/java/io/radar/cordova/RadarForegroundService.java" target-dir="src/android/src/main/java/io/radar/cordova"/>
 
-        <framework src="io.radar:sdk:3.1.8"/>
+        <framework src="io.radar:sdk:3.1.15"/>
 
     </platform>
     <platform name="ios">
