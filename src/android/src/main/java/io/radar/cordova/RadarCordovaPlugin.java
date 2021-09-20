@@ -467,11 +467,16 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public void getTripOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         RadarTripOptions options = Radar.getTripOptions();
-        JSONObject optionsObj = null;
-        if (options != null) {
-            optionsObj = options.toJson(); 
+
+        if (options == null) {
+            String optionsStr = null;
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, optionsStr);
+            callbackContext.sendPluginResult(pluginResult);
+
+            return;
         }
 
+        JSONObject optionsObj = options.toJson();
         PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, optionsObj);
         callbackContext.sendPluginResult(pluginResult);
     }
