@@ -9,6 +9,8 @@
 }
 
 - (void)pluginInitialize {
+  NSString *publishableKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"RadarPublishableKey"];
+  [Radar initializeWithPublishableKey:publishableKey];
   [Radar setDelegate:self];
   locationManager = [CLLocationManager new];
 }
@@ -42,7 +44,7 @@
         return;
     }
 
-    NSDictionary *dict = @{@"location": [Radar dictionaryForLocation:location], @"stopped": @(stopped), @"source": [Radar stringForSource:source]};
+    NSDictionary *dict = @{@"location": [Radar dictionaryForLocation:location], @"stopped": @(stopped), @"source": [Radar stringForLocationSource:source]};
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
     [pluginResult setKeepCallbackAsBool:YES];
@@ -185,21 +187,21 @@
 }
 
 - (void)startTrackingEfficient:(CDVInvokedUrlCommand *)command {
-    [Radar startTrackingWithOptions:RadarTrackingOptions.efficient];
+    [Radar startTrackingWithOptions:RadarTrackingOptions.presetEfficient];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)startTrackingResponsive:(CDVInvokedUrlCommand *)command {
-    [Radar startTrackingWithOptions:RadarTrackingOptions.responsive];
+    [Radar startTrackingWithOptions:RadarTrackingOptions.presetResponsive];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)startTrackingContinuous:(CDVInvokedUrlCommand *)command {
-    [Radar startTrackingWithOptions:RadarTrackingOptions.continuous];
+    [Radar startTrackingWithOptions:RadarTrackingOptions.presetContinuous];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -334,7 +336,7 @@
     NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
 
     RadarTripOptions *options = [RadarTripOptions tripOptionsFromDictionary:optionsDict];
-    [Radar startTripWithOptions:options completionHandler:^(RadarStatus status) {
+    [Radar startTripWithOptions:options completionHandler:^(RadarStatus status, RadarTrip* trip, NSArray<RadarEvent*>* events) {
         NSMutableDictionary *dict = [NSMutableDictionary new];
         [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
 
@@ -365,7 +367,7 @@
         }
     }
     
-    [Radar updateTripWithOptions:options status:status completionHandler:^(RadarStatus status) {
+    [Radar updateTripWithOptions:options status:status completionHandler:^(RadarStatus status, RadarTrip* trip, NSArray<RadarEvent*>* events) {
         NSMutableDictionary *dict = [NSMutableDictionary new];
         [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
 
@@ -375,7 +377,7 @@
 }
 
 - (void)completeTrip:(CDVInvokedUrlCommand *)command {
-    [Radar completeTripWithCompletionHandler:^(RadarStatus status) {
+    [Radar completeTripWithCompletionHandler:^(RadarStatus status, RadarTrip* trip, NSArray<RadarEvent*>* events) {
         NSMutableDictionary *dict = [NSMutableDictionary new];
         [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
 
@@ -385,7 +387,7 @@
 }
 
 - (void)cancelTrip:(CDVInvokedUrlCommand *)command {
-    [Radar cancelTripWithCompletionHandler:^(RadarStatus status) {
+    [Radar cancelTripWithCompletionHandler:^(RadarStatus status, RadarTrip* trip, NSArray<RadarEvent*>* events) {
         NSMutableDictionary *dict = [NSMutableDictionary new];
         [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
 

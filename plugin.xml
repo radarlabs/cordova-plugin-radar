@@ -6,6 +6,9 @@
     <js-module src="www/Radar.js" name="Radar">
         <clobbers target="cordova.plugins.radar"/>
     </js-module>
+
+    <preference name="PUBLISHABLE_KEY" />
+
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Radar">
@@ -52,6 +55,10 @@
             </feature>
         </config-file>
 
+        <config-file target="*-Info.plist" parent="RadarPublishableKey">
+            <string>$PUBLISHABLE_KEY</string>
+        </config-file>
+
         <preference name="NS_LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION" default="This app uses your location for geofencing." />
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
             <string>$NS_LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION</string>
@@ -75,7 +82,7 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="RadarSDK" spec="~> 3.1.10"/>
+                <pod name="RadarSDK" spec="~> 3.2.0"/>
             </pods>
         </podspec>
     </platform>
