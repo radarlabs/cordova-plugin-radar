@@ -171,15 +171,23 @@
 
         if (command.arguments && command.arguments.count) {
             NSDictionary *locationDict = [command.arguments objectAtIndex:0];
-            NSNumber *latitudeNumber = locationDict[@"latitude"];
-            NSNumber *longitudeNumber = locationDict[@"longitude"];
-            NSNumber *accuracyNumber = locationDict[@"accuracy"];
-            double latitude = [latitudeNumber doubleValue];
-            double longitude = [longitudeNumber doubleValue];
-            double accuracy = accuracyNumber ? [accuracyNumber doubleValue] : -1;
-            CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:[NSDate date]];
+            
+            BOOL beacon = [locationDict[@"beacon"] boolValue];
+            
+            if (beacon) {
+                [Radar trackOnceWithDesiredAccuracy:RadarTrackingOptionsDesiredAccuracyHigh beacons:YES completionHandler:completionHandler];
+            } else {
+                NSNumber *latitudeNumber = locationDict[@"latitude"];
+                NSNumber *longitudeNumber = locationDict[@"longitude"];
+                NSNumber *accuracyNumber = locationDict[@"accuracy"];
+                double latitude = [latitudeNumber doubleValue];
+                double longitude = [longitudeNumber doubleValue];
+                double accuracy = accuracyNumber ? [accuracyNumber doubleValue] : -1;
+                CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:[NSDate date]];
 
-            [Radar trackOnceWithLocation:location completionHandler:completionHandler];
+                [Radar trackOnceWithLocation:location completionHandler:completionHandler];
+            }
+
         } else {
             [Radar trackOnceWithCompletionHandler:completionHandler];
         }
