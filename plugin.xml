@@ -21,8 +21,8 @@
 
         <source-file src="src/android/radar.xml" target-dir="res/values" />
 
-        <config-file target="./res/values/radar.xml" parent="/resources">
-            <string name="publishable_key">$PUBLISHABLE_KEY</string>
+        <config-file target="app/src/main/res/values/radar.xml" parent="/resources">
+            <string name="radar_publishableKey">$PUBLISHABLE_KEY</string>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/*">
@@ -31,6 +31,14 @@
 
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
         </config-file>
 
         <source-file src="src/android/RadarCordovaPlugin.java" target-dir="src/io/radar/cordova"/>

@@ -1,9 +1,9 @@
 package io.radar.cordova;
 
-import android.Manifest;
 import android.content.Context;
 import android.location.Location;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import io.radar.sdk.Radar;
 import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarTrackingOptions;
+import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy;
 import io.radar.sdk.RadarTripOptions;
 import io.radar.sdk.model.RadarAddress;
 import io.radar.sdk.model.RadarContext;
@@ -36,7 +37,6 @@ import io.radar.sdk.model.RadarUser;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.annotation.TargetApi;
 
 public class RadarCordovaPlugin extends CordovaPlugin {
 
@@ -45,14 +45,20 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     private static CallbackContext clientLocationCallbackContext;
     private static CallbackContext errorCallbackContext;
 
+    @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
       super.initialize(cordova, webView);
 
       String publishableKey = cordova.getActivity().getString(
-          cordova.getActivity().getResources().getIdentifier("publishable_key", "string", cordova.getActivity().getPackageName())
+          cordova.getActivity().getResources().getIdentifier("radar_publishableKey", "string", cordova.getActivity().getPackageName())
       );
 
-      Radar.initialize(cordova.getActivity().getApplicationContext(), publishableKey, new RadarCordovaReceiver());
+      if (publishableKey == null || TextUtils.isEmpty(publishableKey)) {
+          Log.e("RadarCordovaPlugin", "Radar could not initialize. Did you configure the PUBLISHABLE_KEY preference?");
+      } else {
+          Radar.initialize(cordova.getActivity().getApplicationContext(), publishableKey, new RadarCordovaReceiver());
+      }
+
     }
 
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
@@ -344,15 +350,24 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
         if (args != null && args.length() > 0) {
             final JSONObject locationObj = args.getJSONObject(0);
-            double latitude = locationObj.getDouble("latitude");
-            double longitude = locationObj.getDouble("longitude");
-            float accuracy = (float)locationObj.getDouble("accuracy");
-            Location location = new Location("RadarCordovaPlugin");
-            location.setLatitude(latitude);
-            location.setLongitude(longitude);
-            location.setAccuracy(accuracy);
 
-            Radar.trackOnce(location, callback);
+            boolean beacon = locationObj.optBoolean("beacon", false);
+
+            if (beacon) {
+                RadarTrackingOptionsDesiredAccuracy highAccuracy = RadarTrackingOptionsDesiredAccuracy.HIGH;
+                Radar.trackOnce(highAccuracy, true, callback);
+            } else {
+                double latitude = locationObj.getDouble("latitude");
+                double longitude = locationObj.getDouble("longitude");
+                float accuracy = (float)locationObj.getDouble("accuracy");
+                Location location = new Location("RadarCordovaPlugin");
+                location.setLatitude(latitude);
+                location.setLongitude(longitude);
+                location.setAccuracy(accuracy);
+  
+                Radar.trackOnce(location, callback);
+            }
+           
         } else {
             Radar.trackOnce(callback);
         }
