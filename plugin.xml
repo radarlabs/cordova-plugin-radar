@@ -36,7 +36,7 @@
         <source-file src="src/android/RadarCordovaPlugin.java" target-dir="src/io/radar/cordova"/>
         <source-file src="src/android/RadarForegroundService.java" target-dir="src/io/radar/cordova"/>
 
-        <framework src="io.radar:sdk:3.2.2"/>
+        <framework src="io.radar:sdk:3.2.3"/>
 
     </platform>
     <platform name="ios">
