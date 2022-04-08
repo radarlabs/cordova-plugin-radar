@@ -7,7 +7,7 @@ on:
 jobs:
   update_android_sdk_version:
     runs-on: ubuntu-latest
-    if: github.event.client_payload.platform == "android"
+    if: github.event.client_payload.platform == 'android'
     steps:
       - name: Event Information
         run: echo ${{ github.event.client_payload.release }}
@@ -19,15 +19,15 @@ jobs:
       - name: Copy plugin.xml template file
         uses: canastro/copy-action@master
         with:
-          source: "plugin.xml.template"
-          target: "plugin.xml"
+          source: 'plugin.xml.template'
+          target: 'plugin.xml'
 
       # render the template using the input sdk version
       - name: Render radar-sdk-android release version onto plugin.xml
         uses: jayamanikharyono/jinja-action@v0.1
         with:
           data: version=${{ github.event.client_payload.release }}
-          path: "plugin.xml"
+          path: 'plugin.xml'
 
       # open a pull request with the new sdk version
       - name: Create Pull Request
@@ -50,15 +50,15 @@ jobs:
       - name: Copy plugin.xml template file
         uses: canastro/copy-action@master
         with:
-          source: "plugin.xml.template"
-          target: "plugin.xml"
+          source: 'plugin.xml.template'
+          target: 'plugin.xml'
 
       # render the template using the input sdk version
       - name: Render radar-sdk-ios release version onto plugin.xml
         uses: jayamanikharyono/jinja-action@v0.1
         with:
           data: version=${{ github.event.client_payload.release }}
-          path: "plugin.xml"
+          path: 'plugin.xml'
 
       # open a pull request with the new sdk version
       - name: Create Pull Request
