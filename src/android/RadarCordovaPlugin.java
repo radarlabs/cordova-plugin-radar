@@ -1,15 +1,17 @@
 package io.radar.cordova;
 
-import android.Manifest;
 import android.content.Context;
 import android.location.Location;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.apache.cordova.CordovaInterface;
+import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
@@ -21,6 +23,7 @@ import org.json.JSONObject;
 import io.radar.sdk.Radar;
 import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarTrackingOptions;
+import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy;
 import io.radar.sdk.RadarTripOptions;
 import io.radar.sdk.model.RadarAddress;
 import io.radar.sdk.model.RadarContext;
@@ -34,7 +37,6 @@ import io.radar.sdk.model.RadarUser;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.annotation.TargetApi;
 
 public class RadarCordovaPlugin extends CordovaPlugin {
 
@@ -42,6 +44,22 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     private static CallbackContext locationCallbackContext;
     private static CallbackContext clientLocationCallbackContext;
     private static CallbackContext errorCallbackContext;
+
+    @Override
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+      super.initialize(cordova, webView);
+
+      String publishableKey = cordova.getActivity().getString(
+          cordova.getActivity().getResources().getIdentifier("radar_publishableKey", "string", cordova.getActivity().getPackageName())
+      );
+
+      if (publishableKey == null || TextUtils.isEmpty(publishableKey)) {
+          Log.e("RadarCordovaPlugin", "Radar could not initialize. Did you configure the PUBLISHABLE_KEY preference?");
+      } else {
+          Radar.initialize(cordova.getActivity().getApplicationContext(), publishableKey, new RadarCordovaReceiver());
+      }
+
+    }
 
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         try {
@@ -332,15 +350,24 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
         if (args != null && args.length() > 0) {
             final JSONObject locationObj = args.getJSONObject(0);
-            double latitude = locationObj.getDouble("latitude");
-            double longitude = locationObj.getDouble("longitude");
-            float accuracy = (float)locationObj.getDouble("accuracy");
-            Location location = new Location("RadarCordovaPlugin");
-            location.setLatitude(latitude);
-            location.setLongitude(longitude);
-            location.setAccuracy(accuracy);
 
-            Radar.trackOnce(location, callback);
+            boolean beacon = locationObj.optBoolean("beacon", false);
+
+            if (beacon) {
+                RadarTrackingOptionsDesiredAccuracy highAccuracy = RadarTrackingOptionsDesiredAccuracy.HIGH;
+                Radar.trackOnce(highAccuracy, true, callback);
+            } else {
+                double latitude = locationObj.getDouble("latitude");
+                double longitude = locationObj.getDouble("longitude");
+                float accuracy = (float)locationObj.getDouble("accuracy");
+                Location location = new Location("RadarCordovaPlugin");
+                location.setLatitude(latitude);
+                location.setLongitude(longitude);
+                location.setAccuracy(accuracy);
+  
+                Radar.trackOnce(location, callback);
+            }
+           
         } else {
             Radar.trackOnce(callback);
         }
@@ -487,7 +514,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         RadarTripOptions options = RadarTripOptions.fromJson(optionsObj);
         Radar.startTrip(options, new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status) {
+            public void onComplete(Radar.RadarStatus status, RadarTrip trip, RadarEvent[] radarEvents) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
@@ -530,7 +557,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
         Radar.updateTrip(options, status, new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status) {
+            public void onComplete(Radar.RadarStatus status, RadarTrip trip, RadarEvent[] radarEvents) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
@@ -547,7 +574,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void completeTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.completeTrip(new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status) {
+            public void onComplete(Radar.RadarStatus status, RadarTrip trip, RadarEvent[] radarEvents) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
@@ -564,7 +591,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void cancelTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.cancelTrip(new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status) {
+            public void onComplete(Radar.RadarStatus status, RadarTrip trip, RadarEvent[] radarEvents) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());

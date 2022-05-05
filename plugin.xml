@@ -6,6 +6,9 @@
     <js-module src="www/Radar.js" name="Radar">
         <clobbers target="cordova.plugins.radar"/>
     </js-module>
+
+    <preference name="PUBLISHABLE_KEY" />
+
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Radar">
@@ -15,33 +18,33 @@
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <service android:name="io.radar.cordova.RadarForegroundService" android:foregroundServiceType="location" android:stopWithTask="true" />
         </config-file>
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver
-                    android:name="io.radar.cordova.RadarCordovaPlugin$RadarCordovaReceiver"
-                    android:enabled="true"
-                    android:exported="false">
-                <intent-filter>
-                    <action android:name="io.radar.sdk.RECEIVED" />
-                </intent-filter>
-            </receiver>
+
+        <source-file src="src/android/radar.xml" target-dir="res/values" />
+
+        <config-file target="app/src/main/res/values/radar.xml" parent="/resources">
+            <string name="radar_publishableKey">$PUBLISHABLE_KEY</string>
         </config-file>
 
-        <edit-config file="AndroidManifest.xml" target="/manifest" mode="merge">
-            <manifest xmlns:tools="http://schemas.android.com/tools" />
-        </edit-config>
-
         <config-file target="AndroidManifest.xml" parent="/*">
-            <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" tools:node="remove" />
+            <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
         </config-file>
 
-        <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java" target-dir="src/android/src/main/java/io/radar/cordova"/>
-        <source-file src="src/android/src/main/java/io/radar/cordova/RadarForegroundService.java" target-dir="src/android/src/main/java/io/radar/cordova"/>
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+        </config-file>
 
-        <framework src="io.radar:sdk:3.1.8"/>
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+        </config-file>
+
+        <source-file src="src/android/RadarCordovaPlugin.java" target-dir="src/io/radar/cordova"/>
+        <source-file src="src/android/RadarForegroundService.java" target-dir="src/io/radar/cordova"/>
+
+        <framework src="io.radar:sdk:3.2.3"/>
 
     </platform>
     <platform name="ios">
