@@ -120,7 +120,9 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 getMatrix(args, callbackContext);
             } else if (action.equals("setForegroundServiceOptions")) {
                 setForegroundServiceOptions(args, callbackContext);
-            } else {
+            } else if (action.equals("setLogLevel")) {
+                setLogLevel(args, callbackContext);
+            }else {
                 return false;
             }
         } catch (JSONException e) {

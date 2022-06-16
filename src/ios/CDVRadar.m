@@ -364,9 +364,16 @@
     NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
 
     RadarTripOptions *options = [RadarTripOptions tripOptionsFromDictionary:optionsDict];
-    [Radar startTripWithOptions:options completionHandler:^(RadarStatus status) {
+    [Radar startTripWithOptions:options completionHandler:^(RadarStatus status, RadarTrip * _Nullable trip, NSArray<RadarEvent *> * _Nullable events) {
         NSMutableDictionary *dict = [NSMutableDictionary new];
         [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
+        
+        if (trip) {
+            [dict setObject:[trip dictionaryValue] forKey:@"trip"];
+        }
+        if (events) {
+            [dict setObject:[RadarEvent arrayForEvents:events] forKey:@"events"];
+        }
 
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -395,9 +402,16 @@
         }
     }
     
-    [Radar updateTripWithOptions:options status:status completionHandler:^(RadarStatus status) {
+    [Radar updateTripWithOptions:options status:status completionHandler:^(RadarStatus status, RadarTrip * _Nullable trip, NSArray<RadarEvent *> * _Nullable events) {
         NSMutableDictionary *dict = [NSMutableDictionary new];
         [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
+        
+        if (trip) {
+            [dict setObject:[trip dictionaryValue] forKey:@"trip"];
+        }
+        if (events) {
+            [dict setObject:[RadarEvent arrayForEvents:events] forKey:@"events"];
+        }
 
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -405,9 +419,16 @@
 }
 
 - (void)completeTrip:(CDVInvokedUrlCommand *)command {
-    [Radar completeTripWithCompletionHandler:^(RadarStatus status) {
+    [Radar completeTripWithCompletionHandler:^(RadarStatus status, RadarTrip * _Nullable trip, NSArray<RadarEvent *> * _Nullable events) {
         NSMutableDictionary *dict = [NSMutableDictionary new];
         [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
+        
+        if (trip) {
+            [dict setObject:[trip dictionaryValue] forKey:@"trip"];
+        }
+        if (events) {
+            [dict setObject:[RadarEvent arrayForEvents:events] forKey:@"events"];
+        }
 
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -415,9 +436,16 @@
 }
 
 - (void)cancelTrip:(CDVInvokedUrlCommand *)command {
-    [Radar cancelTripWithCompletionHandler:^(RadarStatus status) {
+    [Radar cancelTripWithCompletionHandler:^(RadarStatus status, RadarTrip * _Nullable trip, NSArray<RadarEvent *> * _Nullable events) {
         NSMutableDictionary *dict = [NSMutableDictionary new];
         [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
+        
+        if (trip) {
+            [dict setObject:[trip dictionaryValue] forKey:@"trip"];
+        }
+        if (events) {
+            [dict setObject:[RadarEvent arrayForEvents:events] forKey:@"events"];
+        }
 
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
