@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import io.radar.sdk.Radar;
 import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarTrackingOptions;
+import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsForegroundService;
 import io.radar.sdk.RadarTripOptions;
 import io.radar.sdk.model.RadarAddress;
 import io.radar.sdk.model.RadarContext;
@@ -35,6 +36,8 @@ import io.radar.sdk.model.RadarUser;
 import android.app.Activity;
 import android.content.Intent;
 import android.annotation.TargetApi;
+
+import androidx.annotation.Nullable;
 
 public class RadarCordovaPlugin extends CordovaPlugin {
 
@@ -115,10 +118,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 getDistance(args, callbackContext);
             } else if (action.equals("getMatrix")) {
                 getMatrix(args, callbackContext);
-            } else if (action.equals("startForegroundService")) {
-                startForegroundService(args, callbackContext);
-            } else if (action.equals("stopForegroundService")) {
-                stopForegroundService(args, callbackContext);
+            } else if (action.equals("setForegroundServiceOptions")) {
+                setForegroundServiceOptions(args, callbackContext);
             } else {
                 return false;
             }
@@ -237,6 +238,33 @@ public class RadarCordovaPlugin extends CordovaPlugin {
           Radar.setUserId(userId);
 
           callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+    }
+
+    public void setLogLevel(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final String level = args.getString(0);
+        
+        Radar.RadarLogLevel logLevel = Radar.RadarLogLevel.NONE;
+        if (level != null) {
+            if (level.equals("error") || level.equals("ERROR")) {
+                logLevel = Radar.RadarLogLevel.ERROR;
+            } else if (level.equals("warning") || level.equals("WARNING")) {
+                logLevel = Radar.RadarLogLevel.WARNING;
+            } else if (level.equals("info") || level.equals("INFO")) {
+                logLevel = Radar.RadarLogLevel.INFO;
+            } else if (level.equals("debug") || level.equals("DEBUG")) {
+                logLevel = Radar.RadarLogLevel.DEBUG;
+            }
+        }
+        Radar.setLogLevel(logLevel);
+
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+    }
+
+    public void setForegroundServiceOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final JSONObject optionsJson = args.getJSONObject(0);
+        RadarTrackingOptionsForegroundService options = RadarTrackingOptionsForegroundService.fromJson(optionsJson);
+        Radar.setForegroundServiceOptions(options);
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 
     public void setDescription(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
@@ -487,11 +515,16 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         RadarTripOptions options = RadarTripOptions.fromJson(optionsObj);
         Radar.startTrip(options, new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status) {
+            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip radarTrip, @Nullable RadarEvent[] radarEvents) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
-
+                    if (radarTrip != null) {
+                        obj.put("trip", radarTrip.toJson());
+                    }
+                    if (radarEvents != null) {
+                        obj.put("events", RadarEvent.toJson(radarEvents));
+                    }
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
                     Log.e("RadarCordovaPlugin", "JSONException", e);
@@ -530,11 +563,16 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
         Radar.updateTrip(options, status, new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status) {
+            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip radarTrip, @Nullable RadarEvent[] radarEvents) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
-                    
+                    if (radarTrip != null) {
+                        obj.put("trip", radarTrip.toJson());
+                    }
+                    if (radarEvents != null) {
+                        obj.put("events", RadarEvent.toJson(radarEvents));
+                    }
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
                     Log.e("RadarCordovaPlugin", "JSONException", e);
@@ -547,11 +585,16 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void completeTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.completeTrip(new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status) {
+            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip radarTrip, @Nullable RadarEvent[] radarEvents) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
-                    
+                    if (radarTrip != null) {
+                        obj.put("trip", radarTrip.toJson());
+                    }
+                    if (radarEvents != null) {
+                        obj.put("events", RadarEvent.toJson(radarEvents));
+                    }
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
                     Log.e("RadarCordovaPlugin", "JSONException", e);
@@ -564,10 +607,17 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void cancelTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.cancelTrip(new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status) {
+            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip radarTrip, @Nullable RadarEvent[] radarEvents) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
+
+                    if (radarTrip != null) {
+                        obj.put("trip", radarTrip.toJson());
+                    }
+                    if (radarEvents != null) {
+                        obj.put("events", RadarEvent.toJson(radarEvents));
+                    }
                     
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
@@ -938,30 +988,4 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             }
         });
     }
-
-    public void startForegroundService(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        if (Build.VERSION.SDK_INT >= 26) {
-            Activity activity = cordova.getActivity();
-            Intent intent = new Intent(activity, RadarForegroundService.class);
-            intent.setAction("start");
-            intent.putExtra("title", args.getString(0))
-                .putExtra("text", args.getString(1))
-                .putExtra("icon", args.getString(2))
-                .putExtra("importance", args.getString(3))
-                .putExtra("id", args.getString(4))
-                .putExtra("activity", activity.getClass().getCanonicalName());
-            activity.getApplicationContext().startForegroundService(intent);
-            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
-        }
-    }
-
-    public void stopForegroundService(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        if (Build.VERSION.SDK_INT >= 26) {
-            Activity activity = cordova.getActivity();
-            Intent intent = new Intent(activity, RadarForegroundService.class);
-            intent.setAction("stop");
-            activity.getApplicationContext().startService(intent);
-        }
-    }
-
 }

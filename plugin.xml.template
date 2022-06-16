@@ -13,9 +13,6 @@
             </feature>
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <service android:name="io.radar.cordova.RadarForegroundService" android:foregroundServiceType="location" android:stopWithTask="true" />
-        </config-file>
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <receiver
                     android:name="io.radar.cordova.RadarCordovaPlugin$RadarCordovaReceiver"
                     android:enabled="true"
@@ -39,7 +36,6 @@
         </config-file>
 
         <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java" target-dir="src/android/src/main/java/io/radar/cordova"/>
-        <source-file src="src/android/src/main/java/io/radar/cordova/RadarForegroundService.java" target-dir="src/android/src/main/java/io/radar/cordova"/>
 
         <framework src="io.radar:sdk:{{ version }}"/>
 

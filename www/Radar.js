@@ -167,12 +167,12 @@ const getMatrix = (options, callback) => {
   exec('getMatrix', [options], callback);
 };
 
-const startForegroundService = (args, callback) => {
-  exec('startForegroundService', [args.title || '', args.text || '', args.icon || '', args.importance || '1', args.notificationId || ''], callback);
-};
+const setForegroundServiceOptions = (args, callback) => {
+  exec('setForegroundServiceOptions', [options], callback)
+}
 
-const stopForegroundService = () => {
-  exec('stopForegroundService', []);
+const setLogLevel = (logLevel) => {
+  exec('setLogLevel', [logLevel]);
 };
 
 const Radar = {
@@ -211,8 +211,8 @@ const Radar = {
   ipGeocode,
   getDistance,
   getMatrix,
-  startForegroundService,
-  stopForegroundService
+  setForegroundServiceOptions,
+  setLogLevel
 };
 
 module.exports = Radar;

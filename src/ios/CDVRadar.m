@@ -13,12 +13,16 @@
   locationManager = [CLLocationManager new];
 }
 
-- (void)didReceiveEvents:(NSArray<RadarEvent *> *)events user:(RadarUser *)user {
+- (void)didReceiveEvents:(NSArray<RadarEvent *> *)events user:(RadarUser * _Nullable )user {
     if (!eventsCallbackId) {
         return;
     }
 
-    NSDictionary *dict = @{@"events": [RadarEvent arrayForEvents:events], @"user": [user dictionaryValue]};
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    [dict setValue:[RadarEvent arrayForEvents:events] forKey:@"events"];
+    if (user) {
+        [dict setValue:[user dictionaryValue] forKey:@"user"];
+    }
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
     [pluginResult setKeepCallbackAsBool:YES];
@@ -42,7 +46,7 @@
         return;
     }
 
-    NSDictionary *dict = @{@"location": [Radar dictionaryForLocation:location], @"stopped": @(stopped), @"source": [Radar stringForSource:source]};
+    NSDictionary *dict = @{@"location": [Radar dictionaryForLocation:location], @"stopped": @(stopped), @"source": [Radar stringForLocationSource:source]};
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
     [pluginResult setKeepCallbackAsBool:YES];
@@ -69,6 +73,27 @@
     NSString *userId = [command.arguments objectAtIndex:0];
 
     [Radar setUserId:userId];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)setLogLevel:(CDVInvokedUrlCommand *)command {
+    NSString *level = [command.arguments objectAtIndex:0];
+
+    RadarLogLevel logLevel = RadarLogLevelNone;
+    if (level) {
+        if ([level isEqualToString:@"error"] || [level isEqualToString:@"ERROR"]) {
+            logLevel = RadarLogLevelError;
+        } else if ([level isEqualToString:@"warning"] || [level isEqualToString:@"WARNING"]) {
+            logLevel = RadarLogLevelWarning;
+        } else if ([level isEqualToString:@"info"] || [level isEqualToString:@"INFO"]) {
+            logLevel = RadarLogLevelInfo;
+        } else if ([level isEqualToString:@"debug"] || [level isEqualToString:@"DEBUG"]) {
+            logLevel = RadarLogLevelDebug;
+        }
+    }
+    [Radar setLogLevel:logLevel];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -185,21 +210,21 @@
 }
 
 - (void)startTrackingEfficient:(CDVInvokedUrlCommand *)command {
-    [Radar startTrackingWithOptions:RadarTrackingOptions.efficient];
+    [Radar startTrackingWithOptions:RadarTrackingOptions.presetEfficient];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)startTrackingResponsive:(CDVInvokedUrlCommand *)command {
-    [Radar startTrackingWithOptions:RadarTrackingOptions.responsive];
+    [Radar startTrackingWithOptions:RadarTrackingOptions.presetResponsive];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)startTrackingContinuous:(CDVInvokedUrlCommand *)command {
-    [Radar startTrackingWithOptions:RadarTrackingOptions.continuous];
+    [Radar startTrackingWithOptions:RadarTrackingOptions.presetContinuous];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -211,6 +236,11 @@
     RadarTrackingOptions *options = [RadarTrackingOptions trackingOptionsFromDictionary:optionsDict];
     [Radar startTrackingWithOptions:options];
 
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)setForegroundServiceOptions:(CDVInvokedUrlCommand *)command {
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
