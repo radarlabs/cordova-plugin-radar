@@ -8,8 +8,7 @@ jobs:
       - checkout:
           path: ~/cordova-plugin-radar
       - run: npm install
-      - run: npm install -g cordova
-      - run: sudo npm install -g @ionic/cli
+      - run: sudo npm install -g @cordova
       - run: cd example && npm install
       - run: cd example && npm install -g cordova
       - run: cd example && cordova platform add android
@@ -23,8 +22,7 @@ jobs:
       - checkout:
           path: ~/cordova-plugin-radar
       - run: npm install
-      - run: npm install -g cordova
-      - run: sudo npm install -g @ionic/cli
+      - run: sudo npm install -g @cordova
       - run: cd example && npm install
       - run: cd example && cordova platform add ios
       - run: cd example && cordova build
