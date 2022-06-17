@@ -23,7 +23,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@radarlabs/cordova-plugin-radar": "../",
     "cordova-android": "^9.1.0",
     "cordova-ios": "^6.2.0"
   }
