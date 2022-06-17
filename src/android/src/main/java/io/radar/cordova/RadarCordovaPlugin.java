@@ -525,15 +525,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         RadarTripOptions options = RadarTripOptions.fromJson(optionsObj);
         Radar.startTrip(options, new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip radarTrip, @Nullable RadarEvent[] radarEvents) {
+            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip trip, @Nullable RadarEvent[] events) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
-                    if (radarTrip != null) {
-                        obj.put("trip", radarTrip.toJson());
+                    if (trip != null) {
+                        obj.put("trip", trip.toJson());
                     }
-                    if (radarEvents != null) {
-                        obj.put("events", RadarEvent.toJson(radarEvents));
+                    if (events != null) {
+                        obj.put("events", RadarEvent.toJson(events));
                     }
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
@@ -573,15 +573,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
         Radar.updateTrip(options, status, new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip radarTrip, @Nullable RadarEvent[] radarEvents) {
+            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip trip, @Nullable RadarEvent[] events) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
-                    if (radarTrip != null) {
-                        obj.put("trip", radarTrip.toJson());
+                    if (trip != null) {
+                        obj.put("trip", trip.toJson());
                     }
-                    if (radarEvents != null) {
-                        obj.put("events", RadarEvent.toJson(radarEvents));
+                    if (events != null) {
+                        obj.put("events", RadarEvent.toJson(events));
                     }
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
@@ -595,15 +595,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void completeTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.completeTrip(new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip radarTrip, @Nullable RadarEvent[] radarEvents) {
+            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip trip, @Nullable RadarEvent[] events) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
-                    if (radarTrip != null) {
-                        obj.put("trip", radarTrip.toJson());
+                    if (trip != null) {
+                        obj.put("trip", trip.toJson());
                     }
-                    if (radarEvents != null) {
-                        obj.put("events", RadarEvent.toJson(radarEvents));
+                    if (events != null) {
+                        obj.put("events", RadarEvent.toJson(events));
                     }
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
@@ -617,18 +617,16 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void cancelTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.cancelTrip(new Radar.RadarTripCallback() {
             @Override
-            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip radarTrip, @Nullable RadarEvent[] radarEvents) {
+            public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip trip, @Nullable RadarEvent[] events) {
                 try {
                     JSONObject obj = new JSONObject();
                     obj.put("status", status.toString());
-
-                    if (radarTrip != null) {
-                        obj.put("trip", radarTrip.toJson());
+                    if (trip != null) {
+                        obj.put("trip", trip.toJson());
                     }
-                    if (radarEvents != null) {
-                        obj.put("events", RadarEvent.toJson(radarEvents));
+                    if (events != null) {
+                        obj.put("events", RadarEvent.toJson(events));
                     }
-                    
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
                 } catch (JSONException e) {
                     Log.e("RadarCordovaPlugin", "JSONException", e);
