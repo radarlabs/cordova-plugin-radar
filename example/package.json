@@ -1,0 +1,30 @@
+{
+  "name": "example",
+  "version": "0.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "Apache-2.0",
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {},
+      "@radarlabs/cordova-plugin-radar": {},
+      "cordova-plugin-radar": {
+        "NS_LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION": "This app uses your location for geofencing.",
+        "NS_LOCATION_ALWAYS_AND_WHEN_IN_USE_USAGE_DESCRIPTION": "This app uses your location for geofencing.",
+        "NS_LOCATION_ALWAYS_USAGE_DESCRIPTION": "This app uses your location for geofencing."
+      }
+    },
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@radarlabs/cordova-plugin-radar": "../",
+    "cordova-android": "^9.1.0",
+    "cordova-ios": "^6.2.0"
+  }
+}

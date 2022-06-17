@@ -1,0 +1,37 @@
+version: 2
+jobs:
+  android:
+    working_directory: ~/cordova-plugin-radar
+    docker:
+      - image: circleci/android:api-28-node
+    steps:
+      - checkout:
+          path: ~/cordova-plugin-radar
+      - run: npm install
+      - run: npm run build
+      - run: sudo npm install -g @ionic/cli
+      - run: cd example && npm install
+      - run: cd example && cordova platform add android
+      - run: cd example && cordova build
+      - run: cd example && cordova run android
+  ios:
+    macos:
+      xcode: 13.1.0
+    working_directory: ~/capacitor-radar
+    steps:
+      - checkout:
+          path: ~/cordova-plugin-radar
+      - run: npm install
+      - run: npm run build
+      - run: sudo npm install -g @ionic/cli
+      - run: sudo chown -R 502:20 "/Users/distiller/.npm"
+      - run: cd example && npm install
+      - run: cd example && cordova platform add ios
+      - run: cd example && cordova build
+      - run: cd example && cordova run ios --device
+workflows:
+  version: 2
+  android-ios:
+    jobs:
+      - android
+      - ios
