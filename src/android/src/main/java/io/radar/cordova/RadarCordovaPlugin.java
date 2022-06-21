@@ -306,7 +306,6 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     }
 
     public void trackOnce(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-
         Radar.RadarTrackCallback callback = new Radar.RadarTrackCallback() {
             @Override
             public void onComplete(Radar.RadarStatus status, Location location, RadarEvent[] events, RadarUser user) {
@@ -368,7 +367,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         if (location != null) {
             Radar.trackOnce(location, callback);
         } else {
-            Radar.trackOnce(accuracyLevel, beaconsTrackingOption,callback);
+            Radar.trackOnce(accuracyLevel, beaconsTrackingOption, callback);
         }
     }
 
