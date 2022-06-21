@@ -192,9 +192,9 @@
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         };
 
+        CLLocation *location;
         RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracyMedium;
         BOOL beacons = NO;
-        CLLocation *location;
         if (command.arguments && command.arguments.count) {
             NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
             NSDictionary *locationDict = optionsDict[@"location"];
