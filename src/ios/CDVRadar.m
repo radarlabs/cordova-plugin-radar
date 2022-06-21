@@ -193,14 +193,11 @@
         };
 
         RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracyMedium;
-        BOOL beaconsTrackingOption = NO;
+        BOOL beacons = NO;
         CLLocation *location;
-
         if (command.arguments && command.arguments.count) {
             NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
-
             NSDictionary *locationDict = optionsDict[@"location"];
-
             if (locationDict) {
                 NSNumber *latitudeNumber = locationDict[@"latitude"];
                 NSNumber *longitudeNumber = locationDict[@"longitude"];
@@ -210,10 +207,8 @@
                 double accuracy = accuracyNumber ? [accuracyNumber doubleValue] : -1;
                 location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:[NSDate date]];
             }
-            
-            NSString *desiredAccuracyStr = optionsDict[@"accuracy"];
-
-            if (desiredAccuracyStr != nil && [desiredAccuracyStr isKindOfClass:[NSString class]]) {
+            NSString *desiredAccuracyStr = optionsDict[@"desiredAccuracy"];
+            if (desiredAccuracyStr && [desiredAccuracyStr isKindOfClass:[NSString class]]) {
                 if ([desiredAccuracyStr isEqualToString:@"high"] || [desiredAccuracyStr isEqualToString:@"HIGH"]) {
                     desiredAccuracy = RadarTrackingOptionsDesiredAccuracyHigh;
                 } else if ([desiredAccuracyStr isEqualToString:@"medium"] || [desiredAccuracyStr isEqualToString:@"MEDIUM"]) {
@@ -222,18 +217,16 @@
                     desiredAccuracy = RadarTrackingOptionsDesiredAccuracyLow;
                 }
             }
-
-            NSNumber *beacons = optionsDict[@"beacons"];
-
-            if (beacons) {
-                beaconsTrackingOption = [beacons boolValue];
+            NSNumber *beaconsNum = optionsDict[@"beacons"];
+            if (beaconsNum) {
+                beacons = [beaconsNum boolValue];
             }
         }
 
         if (location) {
             [Radar trackOnceWithLocation:location completionHandler:completionHandler];
         } else {
-            [Radar trackOnceWithDesiredAccuracy:desiredAccuracy beacons:beaconsTrackingOption completionHandler:completionHandler];
+            [Radar trackOnceWithDesiredAccuracy:desiredAccuracy beacons:beacons completionHandler:completionHandler];
         }
     }];
 }

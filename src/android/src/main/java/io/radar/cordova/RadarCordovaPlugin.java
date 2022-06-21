@@ -368,13 +368,11 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             }
         };
 
-        RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
-        boolean beaconsTrackingOption = false;
+        RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
+        boolean beacons = false;
         Location location = null;
-
         if (args != null && args.length() > 0) {
             final JSONObject optionsObj = args.getJSONObject(0);
-
             if (optionsObj.has("location")) {
                 JSONObject locationObj = optionsObj.getJSONObject("location");
                 double latitude = locationObj.getDouble("latitude");
@@ -385,27 +383,25 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 location.setLongitude(longitude);
                 location.setAccuracy(accuracy);
             }
-
-            beaconsTrackingOption = optionsObj.optBoolean("beacons", false);
-
-            if (optionsObj.has("accuracy")) {
-                String accuracy = optionsObj.getString("accuracy");
+            if (optionsObj.has("desiredAccuracy")) {
+                String desiredAccuracyStr = optionsObj.getString("accuracy");
                 if (accuracy.equals("none") || accuracy.equals("NONE")) {
-                    accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.NONE;
+                    desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.NONE;
                 } else if (accuracy.equals("low") || accuracy.equals("LOW")) {
-                    accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.LOW;
+                    desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.LOW;
                 } else if (accuracy.equals("medium") || accuracy.equals("MEDIUM")) {
-                    accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
+                    desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
                 } else if (accuracy.equals("high") || accuracy.equals("HIGH")) {
-                    accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.HIGH;
+                    desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.HIGH;
                 }
             }
+            beacons = optionsObj.optBoolean("beacons", false);
         }
 
         if (location != null) {
             Radar.trackOnce(location, callback);
         } else {
-            Radar.trackOnce(accuracyLevel, beaconsTrackingOption, callback);
+            Radar.trackOnce(desiredAccuracy, beacons, callback);
         }
     }
 
