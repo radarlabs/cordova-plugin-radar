@@ -167,43 +167,42 @@
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         };
 
-        NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
+        RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracyMedium;
+        BOOL beaconsTrackingOption = NO;
+        CLLocation *location;
 
-        NSDictionary *locationDict = optionsDict[@"location"];
+        if (command.arguments && command.arguments.count) {
+            NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
 
-        if (locationDict) {
-            NSNumber *latitudeNumber = locationDict[@"latitude"];
-            NSNumber *longitudeNumber = locationDict[@"longitude"];
-            NSNumber *accuracyNumber = locationDict[@"accuracy"];
-            double latitude = [latitudeNumber doubleValue];
-            double longitude = [longitudeNumber doubleValue];
-            double accuracy = accuracyNumber ? [accuracyNumber doubleValue] : -1;
-            CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:[NSDate date]];
+            NSDictionary *locationDict = optionsDict[@"location"];
 
-        }
-        
-        NSString *desiredAccuracyStr = optionsDict[@"accuracy"];
-        RadarTrackingOptionsDesiredAccuracy desiredAccuracy;
-
-        if (desiredAccuracyStr != nil && [desiredAccuracyStr isKindOfClass:[NSString class]]) {
-            if ([accuracy isEqualToString:@"high"] || [accuracy isEqualToString:@"HIGH"]) {
-                desiredAccuracy = RadarTrackingOptionsDesiredAccuracyHigh;
-            } else if ([accuracy isEqualToString:@"medium"] || [accuracy isEqualToString:@"MEDIUM"]) {
-                desiredAccuracy = RadarTrackingOptionsDesiredAccuracyMedium;
-            } else if ([accuracy isEqualToString:@"low"] || [accuracy isEqualToString:@"LOW"]) {
-                desiredAccuracy = RadarTrackingOptionsDesiredAccuracyLow;
+            if (locationDict) {
+                NSNumber *latitudeNumber = locationDict[@"latitude"];
+                NSNumber *longitudeNumber = locationDict[@"longitude"];
+                NSNumber *accuracyNumber = locationDict[@"accuracy"];
+                double latitude = [latitudeNumber doubleValue];
+                double longitude = [longitudeNumber doubleValue];
+                double accuracy = accuracyNumber ? [accuracyNumber doubleValue] : -1;
+                location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:[NSDate date]];
             }
-        } else {
-            desiredAccuracy = RadarTrackingOptionsDesiredAccuracyMedium;
-        }
+            
+            NSString *desiredAccuracyStr = optionsDict[@"accuracy"];
 
-        BOOL beaconsTrackingOption;
-        BOOL beacons = optionsDict[@"beacons"];
+            if (desiredAccuracyStr != nil && [desiredAccuracyStr isKindOfClass:[NSString class]]) {
+                if ([desiredAccuracyStr isEqualToString:@"high"] || [desiredAccuracyStr isEqualToString:@"HIGH"]) {
+                    desiredAccuracy = RadarTrackingOptionsDesiredAccuracyHigh;
+                } else if ([desiredAccuracyStr isEqualToString:@"medium"] || [desiredAccuracyStr isEqualToString:@"MEDIUM"]) {
+                    desiredAccuracy = RadarTrackingOptionsDesiredAccuracyMedium;
+                } else if ([desiredAccuracyStr isEqualToString:@"low"] || [desiredAccuracyStr isEqualToString:@"LOW"]) {
+                    desiredAccuracy = RadarTrackingOptionsDesiredAccuracyLow;
+                }
+            }
 
-        if (beacons) {
-            beaconsTrackingOption = [beacons boolValue];
-        } else {
-            beaconsTrackingOption = NO;
+            NSNumber *beacons = optionsDict[@"beacons"];
+
+            if (beacons) {
+                beaconsTrackingOption = [beacons boolValue];
+            }
         }
 
         if (location) {
