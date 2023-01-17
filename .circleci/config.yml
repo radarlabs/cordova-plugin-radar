@@ -26,7 +26,6 @@ jobs:
       - run: cd example && cordova platform add ios
       - run: cd example && cordova plugin add ../plugin
       - run: cd example && cordova build
-      - run: cd example && cordova run ios --device
 workflows:
   version: 2
   android-ios:
