@@ -1,0 +1,34 @@
+version: 2
+jobs:
+  android:
+    working_directory: ~/cordova-plugin-radar
+    docker:
+      - image: cimg/android:2022.04.1-node
+    steps:
+      - checkout:
+          path: ~/cordova-plugin-radar
+      - run: sudo npm install -g cordova
+      - run: cd example && npm install
+      - run: cd example && cordova platform add android
+      - run: cd example && cordova plugin add ../plugin
+      - run: cd example && cordova build
+  ios:
+    macos:
+      xcode: 13.1.0
+    working_directory: ~/cordova-plugin-radar
+    steps:
+      - checkout:
+          path: ~/cordova-plugin-radar
+      - run: npm install
+      - run: sudo npm install -g cordova
+      - run: cd example && npm install
+      - run: sudo chown -R 502:20 "/Users/distiller/.config"
+      - run: cd example && cordova platform add ios
+      - run: cd example && cordova plugin add ../plugin
+      - run: cd example && cordova build
+workflows:
+  version: 2
+  android-ios:
+    jobs:
+      - android
+      - ios
