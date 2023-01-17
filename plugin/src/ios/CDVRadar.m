@@ -192,19 +192,41 @@
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         };
 
+        CLLocation *location;
+        RadarTrackingOptionsDesiredAccuracy desiredAccuracy = RadarTrackingOptionsDesiredAccuracyMedium;
+        BOOL beacons = NO;
         if (command.arguments && command.arguments.count) {
-            NSDictionary *locationDict = [command.arguments objectAtIndex:0];
-            NSNumber *latitudeNumber = locationDict[@"latitude"];
-            NSNumber *longitudeNumber = locationDict[@"longitude"];
-            NSNumber *accuracyNumber = locationDict[@"accuracy"];
-            double latitude = [latitudeNumber doubleValue];
-            double longitude = [longitudeNumber doubleValue];
-            double accuracy = accuracyNumber ? [accuracyNumber doubleValue] : -1;
-            CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:[NSDate date]];
+            NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
+            NSDictionary *locationDict = optionsDict[@"location"];
+            if (locationDict) {
+                NSNumber *latitudeNumber = locationDict[@"latitude"];
+                NSNumber *longitudeNumber = locationDict[@"longitude"];
+                NSNumber *accuracyNumber = locationDict[@"accuracy"];
+                double latitude = [latitudeNumber doubleValue];
+                double longitude = [longitudeNumber doubleValue];
+                double accuracy = accuracyNumber ? [accuracyNumber doubleValue] : -1;
+                location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude) altitude:-1 horizontalAccuracy:accuracy verticalAccuracy:-1 timestamp:[NSDate date]];
+            }
+            NSString *desiredAccuracyStr = optionsDict[@"desiredAccuracy"];
+            if (desiredAccuracyStr && [desiredAccuracyStr isKindOfClass:[NSString class]]) {
+                if ([desiredAccuracyStr isEqualToString:@"high"] || [desiredAccuracyStr isEqualToString:@"HIGH"]) {
+                    desiredAccuracy = RadarTrackingOptionsDesiredAccuracyHigh;
+                } else if ([desiredAccuracyStr isEqualToString:@"medium"] || [desiredAccuracyStr isEqualToString:@"MEDIUM"]) {
+                    desiredAccuracy = RadarTrackingOptionsDesiredAccuracyMedium;
+                } else if ([desiredAccuracyStr isEqualToString:@"low"] || [desiredAccuracyStr isEqualToString:@"LOW"]) {
+                    desiredAccuracy = RadarTrackingOptionsDesiredAccuracyLow;
+                }
+            }
+            NSNumber *beaconsNum = optionsDict[@"beacons"];
+            if (beaconsNum) {
+                beacons = [beaconsNum boolValue];
+            }
+        }
 
+        if (location) {
             [Radar trackOnceWithLocation:location completionHandler:completionHandler];
         } else {
-            [Radar trackOnceWithCompletionHandler:completionHandler];
+            [Radar trackOnceWithDesiredAccuracy:desiredAccuracy beacons:beacons completionHandler:completionHandler];
         }
     }];
 }
