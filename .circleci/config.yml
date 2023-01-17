@@ -12,7 +12,6 @@ jobs:
       - run: cd example && cordova platform add android
       - run: cd example && cordova plugin add ../plugin
       - run: cd example && cordova build
-      - run: cd example && cordova run android
   ios:
     macos:
       xcode: 13.1.0
