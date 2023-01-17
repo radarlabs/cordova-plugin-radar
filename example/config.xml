@@ -17,7 +17,6 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
-        
         <preference name="AndroidXEnabled" value="true" />
     </platform>
     <platform name="ios">
@@ -30,6 +29,5 @@
             <string>Background location</string>
         </edit-config>
     </platform>
-    <plugin name="cordova-plugin-whitelist" />
     <plugin name="@radarlabs/cordova-plugin-radar" />
 </widget>

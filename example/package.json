@@ -8,7 +8,6 @@
   "license": "Apache-2.0",
   "cordova": {
     "plugins": {
-      "cordova-plugin-whitelist": {},
       "@radarlabs/cordova-plugin-radar": {},
       "cordova-plugin-radar": {
         "NS_LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION": "This app uses your location for geofencing.",
@@ -21,10 +20,9 @@
       "android"
     ]
   },
-  "dependencies": {},
   "devDependencies": {
     "@radarlabs/cordova-plugin-radar": "file:../plugin",
-    "cordova-android": "^9.1.0",
+    "cordova-android": "11.0.0",
     "cordova-ios": "^6.2.0"
   }
 }
