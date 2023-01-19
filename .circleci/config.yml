@@ -3,17 +3,15 @@ jobs:
   android:
     working_directory: ~/cordova-plugin-radar
     docker:
-      - image: circleci/android:api-28-node
+      - image: cimg/android:2022.04.1-node
     steps:
       - checkout:
           path: ~/cordova-plugin-radar
-      - run: npm install
       - run: sudo npm install -g cordova
       - run: cd example && npm install
       - run: cd example && cordova platform add android
       - run: cd example && cordova plugin add ../plugin
       - run: cd example && cordova build
-      - run: cd example && cordova run android
   ios:
     macos:
       xcode: 13.1.0
@@ -28,7 +26,6 @@ jobs:
       - run: cd example && cordova platform add ios
       - run: cd example && cordova plugin add ../plugin
       - run: cd example && cordova build
-      - run: cd example && cordova run ios --device
 workflows:
   version: 2
   android-ios:
