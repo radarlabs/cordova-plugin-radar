@@ -50,7 +50,9 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         try {
-            if (action.equals("setUserId")) {
+            if (action.equals("initialize")) {
+                initialize(args, callbackContext);
+            } else if (action.equals("setUserId")) {
                 setUserId(args, callbackContext);
             } else if (action.equals("setDescription")) {
                 setDescription(args, callbackContext);
@@ -240,6 +242,13 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             arr[i] = jsonArr.optString(i);
         }
         return arr;
+    }
+
+    public void initialize(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final String publishableKey = args.getString(0);
+        Context context=this.cordova.getActivity().getApplicationContext(); 
+        Radar.initialize(context, publishableKey);
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 
     public void setUserId(final JSONArray args, final CallbackContext callbackContext) throws JSONException {

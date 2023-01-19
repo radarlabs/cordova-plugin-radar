@@ -69,6 +69,15 @@
 
 }
 
+- (void)initialize:(CDVInvokedUrlCommand *)command {
+    NSString *publishableKey = [command.arguments objectAtIndex:0];
+
+    [Radar initializeWithPublishableKey:publishableKey];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)setUserId:(CDVInvokedUrlCommand *)command {
     NSString *userId = [command.arguments objectAtIndex:0];
 

@@ -7,6 +7,10 @@ const exec = (action, args, callback) => {
     }, 'Radar', action, args);
 };
 
+const initialize = (publishableKey) => {
+  exec('initialize', [publishableKey]);
+}
+
 const setUserId = (userId) => {
   exec('setUserId', [userId]);
 };
@@ -176,6 +180,7 @@ const setLogLevel = (logLevel) => {
 };
 
 const Radar = {
+  initialize,
   setUserId,
   setDescription,
   setMetadata,
