@@ -87,6 +87,13 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)getUserId:(CDVInvokedUrlCommand *)command {
+    NSString *userId = [Radar getUserId];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:userId];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)setLogLevel:(CDVInvokedUrlCommand *)command {
     NSString *level = [command.arguments objectAtIndex:0];
 

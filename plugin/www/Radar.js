@@ -15,6 +15,10 @@ const setUserId = (userId) => {
   exec('setUserId', [userId]);
 };
 
+const getUserId = (callback) => {
+  exec("getUserId", null, callback)
+}
+
 const setDescription = (description) => {
   exec('setDescription', [description]);
 };
@@ -182,6 +186,7 @@ const setLogLevel = (logLevel) => {
 const Radar = {
   initialize,
   setUserId,
+  getUserId,
   setDescription,
   setMetadata,
   getPermissionsStatus,
