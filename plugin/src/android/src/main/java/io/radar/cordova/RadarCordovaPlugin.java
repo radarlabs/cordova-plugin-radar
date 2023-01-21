@@ -58,6 +58,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 getUserId(args, callbackContext);
             } else if (action.equals("setDescription")) {
                 setDescription(args, callbackContext);
+            } else if (action.equals("getDescription")) { 
+                getDescription(args, callbackContext);
             } else if (action.equals("setMetadata")) {
                 setMetadata(args, callbackContext);
             } else if (action.equals("getPermissionsStatus")) {
@@ -300,6 +302,12 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         Radar.setDescription(description);
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+    }
+
+    public void getDescription(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        String description = Radar.getDescription();
+        
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, description));
     }
 
     public void setMetadata(final JSONArray args, final CallbackContext callbackContext) throws JSONException {

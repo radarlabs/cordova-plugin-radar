@@ -23,6 +23,10 @@ const setDescription = (description) => {
   exec('setDescription', [description]);
 };
 
+const getDescription = (callback) => {
+  exec("getDescription", null, callback);
+}
+
 const setMetadata = (metadata) => {
   exec('setMetadata', [metadata]);
 };
@@ -188,6 +192,7 @@ const Radar = {
   setUserId,
   getUserId,
   setDescription,
+  getDescription,
   setMetadata,
   getPermissionsStatus,
   requestPermissions,

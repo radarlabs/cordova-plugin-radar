@@ -124,6 +124,13 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)getDescription:(CDVInvokedUrlCommand *)command {
+    NSString *description = [Radar getDescription];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:description];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)setMetadata:(CDVInvokedUrlCommand *)command {
     NSDictionary *metadata = [command.arguments objectAtIndex:0];
 
