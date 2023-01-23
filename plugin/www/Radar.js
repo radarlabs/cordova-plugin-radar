@@ -3,7 +3,7 @@ const cordova = require('cordova');
 const exec = (action, args, callback) => {
   cordova.exec(callback,
     (err) => {
-      console.log(err);
+      console.error(err, action, args);
     }, 'Radar', action, args);
 };
 
@@ -34,6 +34,10 @@ const setMetadata = (metadata) => {
 const getMetadata = (callback) => {
   exec('getMetadata', null, callback);
 };
+
+const setAnonymousTrackingEnabled = (enabled) => {
+  exec('setAnonymousTrackingEnabled', [enabled]);
+}
 
 const getPermissionsStatus = (callback) => {
   exec('getPermissionsStatus', null, callback);
@@ -199,6 +203,7 @@ const Radar = {
   getDescription,
   setMetadata,
   getMetadata,
+  setAnonymousTrackingEnabled,
   getPermissionsStatus,
   requestPermissions,
   getLocation,

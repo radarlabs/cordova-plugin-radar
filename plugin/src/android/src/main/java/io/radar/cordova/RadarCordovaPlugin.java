@@ -64,6 +64,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 setMetadata(args, callbackContext);
             } else if (action.equals("getMetadata")) {
                 getMetadata(args, callbackContext);
+            } else if (action.equals("setAnonymousTrackingEnabled")) {
+                setAnonymousTrackingEnabled(args, callbackContext);
             } else if (action.equals("getPermissionsStatus")) {
                 getPermissionsStatus(args, callbackContext);
             } else if (action.equals("requestPermissions")) {
@@ -324,6 +326,14 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         JSONObject metadata = Radar.getMetadata();
         
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, metadata));
+    }
+
+    public void setAnonymousTrackingEnabled(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final boolean enabled = args.getBoolean(0);
+
+        Radar.setAnonymousTrackingEnabled(enabled);
+        
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 
     public void getPermissionsStatus(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
