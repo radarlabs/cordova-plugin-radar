@@ -31,6 +31,10 @@ const setMetadata = (metadata) => {
   exec('setMetadata', [metadata]);
 };
 
+const getMetadata = (callback) => {
+  exec('getMetadata', null, callback);
+};
+
 const getPermissionsStatus = (callback) => {
   exec('getPermissionsStatus', null, callback);
 };
@@ -194,6 +198,7 @@ const Radar = {
   setDescription,
   getDescription,
   setMetadata,
+  getMetadata,
   getPermissionsStatus,
   requestPermissions,
   getLocation,

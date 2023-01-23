@@ -140,6 +140,13 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)getMetadata:(CDVInvokedUrlCommand *)command {
+    NSDictionary *metadata = [Radar getMetadata];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:metadata];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)getPermissionsStatus:(CDVInvokedUrlCommand *)command {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
 
