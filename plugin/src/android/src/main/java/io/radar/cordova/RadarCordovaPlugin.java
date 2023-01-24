@@ -376,7 +376,22 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     }
 
     public void getLocation(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Radar.getLocation(new Radar.RadarLocationCallback() {
+        String desiredAccuracy = args.getString(0);
+        RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
+        String accuracy = desiredAccuracy != null ? desiredAccuracy.toLowerCase()  : "medium";
+
+        if (accuracy.equals("low")) {
+            accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.LOW;
+        } else if (accuracy.equals("medium")) {
+            accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
+        } else if (accuracy.equals("high")) {
+            accuracyLevel = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.HIGH;
+        } else {
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, "invalid desiredAccuracy: " + desiredAccuracy));
+            return;
+        }
+
+        Radar.getLocation(accuracyLevel, new Radar.RadarLocationCallback() {
             @Override
             public void onComplete(Radar.RadarStatus status, Location location, boolean stopped) {
                 try {

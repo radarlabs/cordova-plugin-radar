@@ -51,8 +51,8 @@ const requestPermissions = (background) => {
   exec('requestPermissions', [background]);
 };
 
-const getLocation = (callback) => {
-  exec('getLocation', null, callback);
+const getLocation = (desiredAccuracy, callback) => {
+  exec('getLocation', [desiredAccuracy], callback);
 };
 
 const trackOnce = (arg1, arg2) => {

@@ -210,8 +210,25 @@
 }
 
 - (void)getLocation:(CDVInvokedUrlCommand *)command {
+    NSString *desiredAccuracy = [command.arguments objectAtIndex:0];
+    RadarTrackingOptionsDesiredAccuracy accuracy = RadarTrackingOptionsDesiredAccuracyMedium;
+    
+    if (desiredAccuracy) {
+        NSString *lowerAccuracy = [desiredAccuracy lowercaseString];
+        if ([lowerAccuracy isEqualToString:@"high"]) {
+            accuracy = RadarTrackingOptionsDesiredAccuracyHigh;
+        } else if ([lowerAccuracy isEqualToString:@"medium"]) {
+            accuracy = RadarTrackingOptionsDesiredAccuracyMedium;
+        } else if ([lowerAccuracy isEqualToString:@"low"]) {
+            accuracy = RadarTrackingOptionsDesiredAccuracyLow;
+        } else {            
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"invalid desiredAccuracy"];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];            
+            return;
+        }
+    }
     [self.commandDelegate runInBackground:^{
-        [Radar getLocationWithCompletionHandler:^(RadarStatus status, CLLocation *location, BOOL stopped) {
+        [Radar getLocationWithDesiredAccuracy:accuracy completionHandler:^(RadarStatus status, CLLocation *location, BOOL stopped) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
             if (location) {
