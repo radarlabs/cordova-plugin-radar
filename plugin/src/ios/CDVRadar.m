@@ -158,6 +158,17 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)setAdIdEnabled:(CDVInvokedUrlCommand *)command {
+    NSNumber *enabledNumber = [command.arguments objectAtIndex:0];
+
+    BOOL enabled = [enabledNumber boolValue];
+
+    [Radar setAdIdEnabled:enabled];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)getPermissionsStatus:(CDVInvokedUrlCommand *)command {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
 

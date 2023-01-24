@@ -39,6 +39,10 @@ const setAnonymousTrackingEnabled = (enabled) => {
   exec('setAnonymousTrackingEnabled', [enabled]);
 }
 
+const setAdIdEnabled = (enabled) => {
+  exec('setAdIdEnabled', [enabled]);
+}
+
 const getPermissionsStatus = (callback) => {
   exec('getPermissionsStatus', null, callback);
 };
@@ -204,6 +208,7 @@ const Radar = {
   setMetadata,
   getMetadata,
   setAnonymousTrackingEnabled,
+  setAdIdEnabled,
   getPermissionsStatus,
   requestPermissions,
   getLocation,
