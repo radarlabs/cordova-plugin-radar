@@ -452,15 +452,18 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 location.setAccuracy(accuracy);
             }
             if (optionsObj.has("desiredAccuracy")) {
-                String desiredAccuracyStr = optionsObj.getString("accuracy");
-                if (desiredAccuracyStr.equals("none") || desiredAccuracyStr.equals("NONE")) {
+                String desiredAccuracyStr = optionsObj.getString("desiredAccuracy").toLowerCase();
+                if (desiredAccuracyStr.equals("none")) {
                     desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.NONE;
-                } else if (desiredAccuracyStr.equals("low") || desiredAccuracyStr.equals("LOW")) {
+                } else if (desiredAccuracyStr.equals("low")) {
                     desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.LOW;
-                } else if (desiredAccuracyStr.equals("medium") || desiredAccuracyStr.equals("MEDIUM")) {
+                } else if (desiredAccuracyStr.equals("medium")) {
                     desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.MEDIUM;
-                } else if (desiredAccuracyStr.equals("high") || desiredAccuracyStr.equals("HIGH")) {
+                } else if (desiredAccuracyStr.equals("high")) {
                     desiredAccuracy = RadarTrackingOptions.RadarTrackingOptionsDesiredAccuracy.HIGH;
+                } else {
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, "invalid desiredAccuracy: " + desiredAccuracy));
+                    return;
                 }
             }
             beacons = optionsObj.optBoolean("beacons", false);

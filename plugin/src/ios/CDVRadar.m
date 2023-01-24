@@ -278,12 +278,17 @@
             }
             NSString *desiredAccuracyStr = optionsDict[@"desiredAccuracy"];
             if (desiredAccuracyStr && [desiredAccuracyStr isKindOfClass:[NSString class]]) {
-                if ([desiredAccuracyStr isEqualToString:@"high"] || [desiredAccuracyStr isEqualToString:@"HIGH"]) {
+                NSString *lowerAccuracy = [desiredAccuracyStr lowercaseString];
+                if ([lowerAccuracy isEqualToString:@"high"]) {
                     desiredAccuracy = RadarTrackingOptionsDesiredAccuracyHigh;
-                } else if ([desiredAccuracyStr isEqualToString:@"medium"] || [desiredAccuracyStr isEqualToString:@"MEDIUM"]) {
+                } else if ([lowerAccuracy isEqualToString:@"medium"]) {
                     desiredAccuracy = RadarTrackingOptionsDesiredAccuracyMedium;
-                } else if ([desiredAccuracyStr isEqualToString:@"low"] || [desiredAccuracyStr isEqualToString:@"LOW"]) {
+                } else if ([lowerAccuracy isEqualToString:@"low"]) {
                     desiredAccuracy = RadarTrackingOptionsDesiredAccuracyLow;
+                } else {            
+                    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"invalid desiredAccuracy"];
+                    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];            
+                    return;
                 }
             }
             NSNumber *beaconsNum = optionsDict[@"beacons"];
