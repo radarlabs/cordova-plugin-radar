@@ -88,6 +88,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 mockTracking(args, callbackContext);
             } else if (action.equals("stopTracking")) {
                 stopTracking(args, callbackContext);
+            } else if (action.equals("isTracking")) {
+                isTracking(args, callbackContext);
             } else if (action.equals("onEvents")) {
                 onEvents(args, callbackContext);
             } else if (action.equals("onLocation")) {
@@ -561,6 +563,10 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         Radar.stopTracking();
 
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+    }
+
+    public void isTracking(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, Radar.isTracking()));
     }
 
     public void onEvents(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
