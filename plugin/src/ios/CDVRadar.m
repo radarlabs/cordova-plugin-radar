@@ -413,6 +413,13 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)getTrackingOptions:(CDVInvokedUrlCommand *)command {
+    RadarTrackingOptions* options = [Radar getTrackingOptions];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[options dictionaryValue]];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)onEvents:(CDVInvokedUrlCommand *)command {
     eventsCallbackId = command.callbackId;
 }

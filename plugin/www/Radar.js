@@ -91,6 +91,10 @@ const isTracking = (callback) => {
   exec('isTracking', null, callback);
 }
 
+const getTrackingOptions = (callback) => {
+  exec('getTrackingOptions', null, callback);
+}
+
 const onEvents = (callback) => {
   exec('onEvents', null, (data) => {
     callback(data.events, data.user);
@@ -224,6 +228,7 @@ const Radar = {
   mockTracking,
   stopTracking,
   isTracking,
+  getTrackingOptions,
   onEvents,
   onLocation,
   onClientLocation,
