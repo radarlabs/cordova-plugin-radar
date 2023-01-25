@@ -471,8 +471,18 @@
 - (void)startTrip:(CDVInvokedUrlCommand *)command {
     NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
 
-    RadarTripOptions *options = [RadarTripOptions tripOptionsFromDictionary:optionsDict];
-    [Radar startTripWithOptions:options completionHandler:^(RadarStatus status, RadarTrip * _Nullable trip, NSArray<RadarEvent *> * _Nullable events) {
+    NSDictionary *tripOptionsDict = optionsDict[@"tripOptions"];
+    if (tripOptionsDict == nil) {
+        tripOptionsDict = optionsDict;
+    }
+    RadarTripOptions *tripOptions = [RadarTripOptions tripOptionsFromDictionary:tripOptionsDict];
+    NSDictionary *trackingOptionsDict = optionsDict[@"trackingOptions"];
+    RadarTrackingOptions *trackingOptions;
+    if (trackingOptionsDict) {
+        trackingOptions = [RadarTrackingOptions trackingOptionsFromDictionary:trackingOptionsDict];
+    }
+
+    [Radar startTripWithOptions:tripOptions trackingOptions:trackingOptions completionHandler:^(RadarStatus status, RadarTrip * _Nullable trip, NSArray<RadarEvent *> * _Nullable events) {
         NSMutableDictionary *dict = [NSMutableDictionary new];
         [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
         

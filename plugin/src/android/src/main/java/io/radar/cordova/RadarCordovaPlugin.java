@@ -628,9 +628,22 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public void startTrip(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         final JSONObject optionsObj = args.getJSONObject(0);
+        
+        // new format is { tripOptions, trackingOptions }
+        JSONObject tripOptionsJson = optionsObj.optJSONObject("tripOptions");
+        if (tripOptionsJson == null) {
+            // legacy format
+            tripOptionsJson = optionsObj;
+        }
+        RadarTripOptions options = RadarTripOptions.fromJson(tripOptionsJson);
 
-        RadarTripOptions options = RadarTripOptions.fromJson(optionsObj);
-        Radar.startTrip(options, new Radar.RadarTripCallback() {
+        RadarTrackingOptions trackingOptions = null;
+        JSONObject trackingOptionsJson = optionsObj.optJSONObject("trackingOptions");
+        if (trackingOptionsJson != null) {
+            trackingOptions = RadarTrackingOptions.fromJson(trackingOptionsJson);
+        }
+
+        Radar.startTrip(options, trackingOptions, new Radar.RadarTripCallback() {
             @Override
             public void onComplete(Radar.RadarStatus status, @Nullable RadarTrip trip, @Nullable RadarEvent[] events) {
                 try {
