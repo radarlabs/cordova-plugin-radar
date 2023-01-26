@@ -727,9 +727,11 @@
             limit = [limitNumber intValue];
         } else {
             limit = 10;
-        }
+        }        
+        NSArray *layers = optionsDict[@"layers"];
+        NSString *country = optionsDict[@"country"];
 
-        [Radar autocompleteQuery:query near:near limit:limit completionHandler:^(RadarStatus status, NSArray<RadarAddress *> * _Nullable addresses) {
+        [Radar autocompleteQuery:query near:near layers:layers limit:limit country:country completionHandler:^(RadarStatus status, NSArray<RadarAddress *> * _Nullable addresses) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
             if (addresses) {
