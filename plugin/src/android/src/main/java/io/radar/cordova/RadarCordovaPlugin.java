@@ -9,6 +9,9 @@ import android.util.Log;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -256,6 +259,26 @@ public class RadarCordovaPlugin extends CordovaPlugin {
             arr[i] = jsonArr.optString(i);
         }
         return arr;
+    }
+
+    private static Map<String, String> stringMapForJSONObject(JSONObject jsonObj) {
+        try {
+            if (jsonObj == null) {
+                return null;
+            }
+
+            Map<String, String> stringMap = new HashMap<String, String>();
+            Iterator<String> keys = jsonObj.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if (jsonObj.get(key) != null) {
+                    stringMap.put(key, jsonObj.getString(key));
+                }
+            }
+            return stringMap;
+        } catch (JSONException j) {
+            return null;
+        }
     }
 
     public void initialize(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
@@ -826,14 +849,15 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         }
         int radius = optionsObj.has("radius") ? optionsObj.getInt("radius") : 1000;
         String[] chains = optionsObj.has("chains") ? RadarCordovaPlugin.stringArrayForArray(optionsObj.getJSONArray("chains")) : null;
+        Map<String, String> chainMetadata = optionsObj.has("chainMetadata") ? RadarCordovaPlugin.stringMapForJSONObject(optionsObj.getJSONObject("chainMetadata")) : null;
         String[] categories = optionsObj.has("categories") ? RadarCordovaPlugin.stringArrayForArray(optionsObj.getJSONArray("categories")) : null;
         String[] groups = optionsObj.has("groups") ? RadarCordovaPlugin.stringArrayForArray(optionsObj.getJSONArray("groups")) : null;
         int limit = optionsObj.has("limit") ? optionsObj.getInt("limit") : 10;
 
         if (near != null) {
-            Radar.searchPlaces(near, radius, chains, categories, groups, limit, callback);
+            Radar.searchPlaces(near, radius, chains, chainMetadata, categories, groups, limit, callback);
         } else {
-            Radar.searchPlaces(radius, chains, categories, groups, limit, callback);
+            Radar.searchPlaces(radius, chains, chainMetadata, categories, groups, limit, callback);
         }
     }
 
