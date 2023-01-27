@@ -207,6 +207,10 @@ const setLogLevel = (logLevel) => {
   exec('setLogLevel', [logLevel]);
 };
 
+const sendEvent = (options, callback) => {
+  exec('sendEvent', [options], callback);
+}
+
 const Radar = {
   initialize,
   setUserId,
@@ -252,7 +256,8 @@ const Radar = {
   getDistance,
   getMatrix,
   setForegroundServiceOptions,
-  setLogLevel
+  setLogLevel,
+  sendEvent
 };
 
 module.exports = Radar;

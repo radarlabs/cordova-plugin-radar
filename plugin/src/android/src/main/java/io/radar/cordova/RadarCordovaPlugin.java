@@ -143,7 +143,9 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 setForegroundServiceOptions(args, callbackContext);
             } else if (action.equals("setLogLevel")) {
                 setLogLevel(args, callbackContext);
-            }else {
+            } else if (action.equals("sendEvent")) {
+                sendEvent(args, callbackContext);
+            } else {
                 return false;
             }
         } catch (JSONException e) {
@@ -1142,6 +1144,39 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                     }
 
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
+            }
+        });
+    }
+
+    public void sendEvent(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final JSONObject optionsObj = args.getJSONObject(0);
+        
+        String customType = optionsObj.getString("customType");
+        JSONObject metadata = optionsObj.getJSONObject("metadata");
+        
+        Radar.sendEvent(customType, metadata, new Radar.RadarSendEventCallback() {
+            @Override
+            public void onComplete(Radar.RadarStatus status, Location location, RadarEvent[] events, RadarUser user) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+                    if (location != null) {
+                        obj.put("location", Radar.jsonForLocation(location));
+                    }
+                    if (events != null) {
+                        obj.put("events", RadarEvent.toJson(events));
+                    }
+                    if (user != null) {
+                        obj.put("user", user.toJson());
+                    }
+
+                    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
+                    pluginResult.setKeepCallback(true);
+                    callbackContext.sendPluginResult(pluginResult);
                 } catch (JSONException e) {
                     Log.e("RadarCordovaPlugin", "JSONException", e);
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
