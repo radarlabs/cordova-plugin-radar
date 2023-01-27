@@ -99,15 +99,24 @@
 
     RadarLogLevel logLevel = RadarLogLevelNone;
     if (level) {
-        if ([level isEqualToString:@"error"] || [level isEqualToString:@"ERROR"]) {
+        NSString *lowerLevel = [level lowercaseString];
+        if ([lowerLevel isEqualToString:@"error"]) {
             logLevel = RadarLogLevelError;
-        } else if ([level isEqualToString:@"warning"] || [level isEqualToString:@"WARNING"]) {
+        } else if ([lowerLevel isEqualToString:@"warning"]) {
             logLevel = RadarLogLevelWarning;
-        } else if ([level isEqualToString:@"info"] || [level isEqualToString:@"INFO"]) {
+        } else if ([lowerLevel isEqualToString:@"info"]) {
             logLevel = RadarLogLevelInfo;
-        } else if ([level isEqualToString:@"debug"] || [level isEqualToString:@"DEBUG"]) {
+        } else if ([lowerLevel isEqualToString:@"debug"]) {
             logLevel = RadarLogLevelDebug;
+        } else {            
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"invalid level"];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];            
+            return;
         }
+    } else {         
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"level is required"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];            
+        return;
     }
     [Radar setLogLevel:logLevel];
 

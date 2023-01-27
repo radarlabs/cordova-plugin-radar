@@ -303,19 +303,26 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     }
 
     public void setLogLevel(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        final String level = args.getString(0);
+        String level = args.getString(0);
         
         Radar.RadarLogLevel logLevel = Radar.RadarLogLevel.NONE;
         if (level != null) {
-            if (level.equals("error") || level.equals("ERROR")) {
+            level = level.toLowerCase();
+            if (level.equals("error")) {
                 logLevel = Radar.RadarLogLevel.ERROR;
-            } else if (level.equals("warning") || level.equals("WARNING")) {
+            } else if (level.equals("warning")) {
                 logLevel = Radar.RadarLogLevel.WARNING;
-            } else if (level.equals("info") || level.equals("INFO")) {
+            } else if (level.equals("info")) {
                 logLevel = Radar.RadarLogLevel.INFO;
-            } else if (level.equals("debug") || level.equals("DEBUG")) {
+            } else if (level.equals("debug")) {
                 logLevel = Radar.RadarLogLevel.DEBUG;
+            } else {
+                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, "invalid level: " + level));
+                return;
             }
+        } else {
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, "level is required"));
+            return;
         }
         Radar.setLogLevel(logLevel);
 
