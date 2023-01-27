@@ -23,12 +23,28 @@ var app = {
 	},
 
 	onDeviceReady: function() {
+		cordova.plugins.radar.initialize('prj_test_pk_000000000000000000000000000');
 		cordova.plugins.radar.setUserId('cordova');
-		/*
-		cordova.plugins.radar.trackOnce((result) => {
-		  alert(JSON.stringify(result));
+		cordova.plugins.radar.setDescription("cordova plugin test");
+		cordova.plugins.radar.setLogLevel('info');
+		cordova.plugins.radar.setMetadata({
+      foo: 'bar',
+    });
+		cordova.plugins.radar.setAdIdEnabled(true);
+		cordova.plugins.radar.setAnonymousTrackingEnabled(false);
+		
+		cordova.plugins.radar.getLocation('low', (result) => {
+		  console.log("getLocation: ", result);
 		});
-		*/
+		cordova.plugins.radar.getUserId((result) => {
+			console.log("getUserId: ", result);
+		});
+		cordova.plugins.radar.getDescription((result) => {
+			console.log("getDescription: ", result);
+		});		
+		cordova.plugins.radar.getMetadata((result) => {
+			console.log("getMetadata: ", result);
+		});		
 		// cordova.plugins.radar.startTrackingContinuous();
 		// cordova.plugins.radar.stopTracking();
 		/*
@@ -46,21 +62,33 @@ var app = {
 		});
 		*/
 		cordova.plugins.radar.requestPermissions(true);
-		/*
-		cordova.plugins.radar.getPermissionsStatus((status) => {
-			alert(JSON.stringify(status));
+		cordova.plugins.radar.getPermissionsStatus((result) => {
+		  console.log("getPermissionsStatus: ", result);
 		});
-		cordova.plugins.radar.trackOnce((result) => {
-		  alert(JSON.stringify(result));
+		cordova.plugins.radar.trackOnce({ desiredAccuracy: "medium", beacons: true }, (result) => {
+		  console.log("trackOnce", result);
+		});
+		cordova.plugins.radar.isTracking((result) => {
+			console.log("isTracking", result);
+		})
+		cordova.plugins.radar.startTrackingContinuous();
+		cordova.plugins.radar.getTrackingOptions((result) => {
+			console.log("getTrackingOptions", result);
 		});
 		cordova.plugins.radar.searchPlaces({
-			radius: 10000,
-			chains: ['starbucks'],
-			limit: 10,
+      near: {
+        'latitude': 40.783826,
+        'longitude': -73.975363,
+      },
+      radius: 1000,
+      chains: ["starbucks"],
+      chainMetadata: {
+        "customFlag": "true"
+      },
+      limit: 10,
 		}, (result) => {
-			alert(JSON.stringify(result));
+			console.log("searchPlaces", result);
 		});
-		*/
 		/*
 		cordova.plugins.radar.getDistance({
 		  origin: {
@@ -96,22 +124,42 @@ var app = {
 		});
 		*/
 		cordova.plugins.radar.startTrip({
-			externalId: '399',
-			metadata: {
-				name: 'Nick Patrick'
+			tripOptions: {
+				externalId: "399",
+				destinationGeofenceTag: "store",
+				destinationGeofenceExternalId: "123",
+				mode: "car",
 			},
-			destinationGeofenceTag: 'store',
-			destinationExternalId: '123',
-			mode: 'foot'
+			trackingOptions: {
+				"desiredStoppedUpdateInterval": 30,
+				"fastestStoppedUpdateInterval": 30,
+				"desiredMovingUpdateInterval": 30,
+				"fastestMovingUpdateInterval": 30,
+				"desiredSyncInterval": 20,
+				"desiredAccuracy": "high",
+				"stopDuration": 0,
+				"stopDistance": 0,
+				"replay": "none",
+				"sync": "all",
+				"showBlueBar": true,
+				"useStoppedGeofence": false,
+				"stoppedGeofenceRadius": 0,
+				"useMovingGeofence": false,
+				"movingGeofenceRadius": 0,
+				"syncGeofences": false,
+				"syncGeofencesLimit": 0,
+				"beacons": false,
+				"foregroundServiceEnabled": false
+			}
 		}, (result) => {
-			alert(JSON.stringify(result));
+			console.log("startTrip: " + JSON.stringify(result));
 
 			cordova.plugins.radar.getTripOptions((result) => {
-				alert(JSON.stringify(result));
+				console.log(">getTripOptions: " + JSON.stringify(result));
 
 				cordova.plugins.radar.updateTrip({
 					options: {
-						externalId: '399',
+						externalId: '299',
 						metadata: {
 							name: 'Nick Patrick'
 						},
@@ -121,13 +169,13 @@ var app = {
 					},
 					status: 'unknown'
 				}, (result) => {
-					alert(JSON.stringify(result));
+					console.log("updateTrip:", JSON.stringify(result));
 	
 					cordova.plugins.radar.getTripOptions((result) => {
-						alert(JSON.stringify(result));
+						console.log(">>getTripOptions:", JSON.stringify(result));
 
 						cordova.plugins.radar.cancelTrip((result) => {
-							alert(JSON.stringify(result));
+							console.log("cancelTrip:", JSON.stringify(result));
 						});
 					});
 				});
@@ -135,7 +183,7 @@ var app = {
 		});
 
 		cordova.plugins.radar.getTripOptions((result) => {
-			alert(JSON.stringify(result));
+			console.log(JSON.stringify(result));
 		});
 		/*
 		let i = 0;
@@ -198,16 +246,26 @@ var app = {
 			mode: 'car',
 			units: 'imperial',
 		}, (result) => {
-			alert(JSON.stringify(result));
+			console.log("getMatrix", JSON.stringify(result));
 		});
-
-		cordova.plugins.radar.startForegroundService({
-			title: 'Foo',
-			text: 'Bar'
-		});
-		setTimeout(() => {
-			cordova.plugins.radar.stopForegroundService();
-		}, 10000);
+		cordova.plugins.radar.autocomplete({
+      query: 'brooklyn roasting',
+      near: {
+        'latitude': 40.783826,
+        'longitude': -73.975363,
+      },
+      limit: 10,
+      layers: ['address', 'street'],
+      country: 'US'
+    }, (result) => {
+			console.log("autocomplete", result);
+    });		
+		cordova.plugins.radar.sendEvent({
+      customType: "in_app_purchase",
+      metadata: {"price": "150USD"}
+    }, (result) => {
+			console.log("sendEvent: ", result);
+		});		
 	},
 
 };
