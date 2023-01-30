@@ -22,8 +22,14 @@ var app = {
 		document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
 	},
 
+	log: function(newValue) {
+		let textArea = document.getElementById('console');
+		textArea.value = textArea.value + '\n\n' + newValue;
+		console.log(newValue);
+	},
+
 	onDeviceReady: function() {
-		cordova.plugins.radar.initialize('prj_test_pk_000000000000000000000000000');
+		cordova.plugins.radar.initialize('prj_test_pk_a427957bed04f6a7a5ed0b21b9002fb536946ea5');
 		cordova.plugins.radar.setUserId('cordova');
 		cordova.plugins.radar.setDescription("cordova plugin test");
 		cordova.plugins.radar.setLogLevel('info');
@@ -34,16 +40,16 @@ var app = {
 		cordova.plugins.radar.setAnonymousTrackingEnabled(false);
 		
 		cordova.plugins.radar.getLocation('low', (result) => {
-		  console.log("getLocation: ", result);
+		  this.log("getLocation: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.getUserId((result) => {
-			console.log("getUserId: ", result);
+			this.log("getUserId: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.getDescription((result) => {
-			console.log("getDescription: ", result);
+			this.log("getDescription: " + JSON.stringify(result));
 		});		
 		cordova.plugins.radar.getMetadata((result) => {
-			console.log("getMetadata: ", result);
+			this.log("getMetadata: " + JSON.stringify(result));
 		});		
 		// cordova.plugins.radar.startTrackingContinuous();
 		// cordova.plugins.radar.stopTracking();
@@ -63,17 +69,17 @@ var app = {
 		*/
 		cordova.plugins.radar.requestPermissions(true);
 		cordova.plugins.radar.getPermissionsStatus((result) => {
-		  console.log("getPermissionsStatus: ", result);
+		  this.log("getPermissionsStatus: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.trackOnce({ desiredAccuracy: "medium", beacons: true }, (result) => {
-		  console.log("trackOnce", result);
+		  this.log("trackOnce: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.isTracking((result) => {
-			console.log("isTracking", result);
+			this.log("isTracking: " + JSON.stringify(result));
 		})
 		cordova.plugins.radar.startTrackingContinuous();
 		cordova.plugins.radar.getTrackingOptions((result) => {
-			console.log("getTrackingOptions", result);
+			this.log("getTrackingOptions: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.searchPlaces({
       near: {
@@ -87,7 +93,7 @@ var app = {
       },
       limit: 10,
 		}, (result) => {
-			console.log("searchPlaces", result);
+			this.log("searchPlaces: " + JSON.stringify(result));
 		});
 		/*
 		cordova.plugins.radar.getDistance({
@@ -152,10 +158,10 @@ var app = {
 				"foregroundServiceEnabled": false
 			}
 		}, (result) => {
-			console.log("startTrip: " + JSON.stringify(result));
+			this.log("startTrip: " + JSON.stringify(result));
 
 			cordova.plugins.radar.getTripOptions((result) => {
-				console.log(">getTripOptions: " + JSON.stringify(result));
+				this.log(">getTripOptions: " + JSON.stringify(result));
 
 				cordova.plugins.radar.updateTrip({
 					options: {
@@ -169,13 +175,13 @@ var app = {
 					},
 					status: 'unknown'
 				}, (result) => {
-					console.log("updateTrip:", JSON.stringify(result));
+					this.log("updateTrip: " + JSON.stringify(result));
 	
 					cordova.plugins.radar.getTripOptions((result) => {
-						console.log(">>getTripOptions:", JSON.stringify(result));
+						this.log(">>getTripOptions:" + JSON.stringify(result));
 
 						cordova.plugins.radar.cancelTrip((result) => {
-							console.log("cancelTrip:", JSON.stringify(result));
+							this.log("cancelTrip:" + JSON.stringify(result));
 						});
 					});
 				});
@@ -183,7 +189,7 @@ var app = {
 		});
 
 		cordova.plugins.radar.getTripOptions((result) => {
-			console.log(JSON.stringify(result));
+			this.log("getTripOptions: " + JSON.stringify(result));
 		});
 		/*
 		let i = 0;
@@ -246,7 +252,7 @@ var app = {
 			mode: 'car',
 			units: 'imperial',
 		}, (result) => {
-			console.log("getMatrix", JSON.stringify(result));
+			this.log("getMatrix: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.autocomplete({
       query: 'brooklyn roasting',
@@ -258,13 +264,13 @@ var app = {
       layers: ['address', 'street'],
       country: 'US'
     }, (result) => {
-			console.log("autocomplete", result);
+			this.log("autocomplete: " + JSON.stringify(result));
     });		
 		cordova.plugins.radar.sendEvent({
       customType: "in_app_purchase",
       metadata: {"price": "150USD"}
     }, (result) => {
-			console.log("sendEvent: ", result);
+			this.log("sendEvent: " + JSON.stringify(result));
 		});		
 	},
 
