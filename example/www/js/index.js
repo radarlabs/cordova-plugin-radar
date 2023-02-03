@@ -18,39 +18,39 @@
  */
 var app = {
 	// Application Constructor
-	initialize: function() {
+	initialize: function () {
 		document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
 	},
 
-	log: function(newValue) {
+	log: function (newValue) {
 		let textArea = document.getElementById('console');
 		textArea.value = textArea.value + '\n\n' + newValue;
 		console.log(newValue);
 	},
 
-	onDeviceReady: function() {
-		cordova.plugins.radar.initialize('prj_test_pk_a427957bed04f6a7a5ed0b21b9002fb536946ea5');
+	onDeviceReady: function () {
+		cordova.plugins.radar.initialize('prj_test_pk_0000000000000000000000000000000000000000');
 		cordova.plugins.radar.setUserId('cordova');
 		cordova.plugins.radar.setDescription("cordova plugin test");
 		cordova.plugins.radar.setLogLevel('info');
 		cordova.plugins.radar.setMetadata({
-      foo: 'bar',
-    });
-		cordova.plugins.radar.setAdIdEnabled(true);
+			foo: 'bar',
+		});
+		cordova.plugins.radar.setAdIdEnabled(false);
 		cordova.plugins.radar.setAnonymousTrackingEnabled(false);
-		
+
 		cordova.plugins.radar.getLocation('low', (result) => {
-		  this.log("getLocation: " + JSON.stringify(result));
+			this.log("getLocation: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.getUserId((result) => {
 			this.log("getUserId: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.getDescription((result) => {
 			this.log("getDescription: " + JSON.stringify(result));
-		});		
+		});
 		cordova.plugins.radar.getMetadata((result) => {
 			this.log("getMetadata: " + JSON.stringify(result));
-		});		
+		});
 		// cordova.plugins.radar.startTrackingContinuous();
 		// cordova.plugins.radar.stopTracking();
 		/*
@@ -69,10 +69,10 @@ var app = {
 		*/
 		cordova.plugins.radar.requestPermissions(true);
 		cordova.plugins.radar.getPermissionsStatus((result) => {
-		  this.log("getPermissionsStatus: " + JSON.stringify(result));
+			this.log("getPermissionsStatus: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.trackOnce({ desiredAccuracy: "medium", beacons: true }, (result) => {
-		  this.log("trackOnce: " + JSON.stringify(result));
+			this.log("trackOnce: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.isTracking((result) => {
 			this.log("isTracking: " + JSON.stringify(result));
@@ -82,36 +82,36 @@ var app = {
 			this.log("getTrackingOptions: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.searchPlaces({
-      near: {
-        'latitude': 40.783826,
-        'longitude': -73.975363,
-      },
-      radius: 1000,
-      chains: ["starbucks"],
-      chainMetadata: {
-        "customFlag": "true"
-      },
-      limit: 10,
+			near: {
+				'latitude': 40.783826,
+				'longitude': -73.975363,
+			},
+			radius: 1000,
+			chains: ["starbucks"],
+			chainMetadata: {
+				"customFlag": "true"
+			},
+			limit: 10,
 		}, (result) => {
 			this.log("searchPlaces: " + JSON.stringify(result));
 		});
 		/*
 		cordova.plugins.radar.getDistance({
-		  origin: {
-		    latitude: 40.78382,
-		    longitude: -73.97536
-		  },
-		  destination: {
-		    latitude: 40.70390,
-		    longitude: -73.98670
-		  },
-		  modes: [
-		    'foot',
-		    'car'
-		  ],
-		  units: 'imperial'
+			origin: {
+				latitude: 40.78382,
+				longitude: -73.97536
+			},
+			destination: {
+				latitude: 40.70390,
+				longitude: -73.98670
+			},
+			modes: [
+				'foot',
+				'car'
+			],
+			units: 'imperial'
 		}, (result) => {
-		  alert(JSON.stringify(result));
+			alert(JSON.stringify(result));
 		});
 		*/
 		/*
@@ -176,7 +176,7 @@ var app = {
 					status: 'unknown'
 				}, (result) => {
 					this.log("updateTrip: " + JSON.stringify(result));
-	
+
 					cordova.plugins.radar.getTripOptions((result) => {
 						this.log(">>getTripOptions:" + JSON.stringify(result));
 
@@ -195,13 +195,13 @@ var app = {
 		let i = 0;
 		cordova.plugins.radar.mockTracking({
 			origin: {
-		    latitude: 40.78382,
-		    longitude: -73.97536
-		  },
-		  destination: {
-		    latitude: 40.70390,
-		    longitude: -73.98670
-		  },
+				latitude: 40.78382,
+				longitude: -73.97536
+			},
+			destination: {
+				latitude: 40.70390,
+				longitude: -73.98670
+			},
 			mode: 'foot',
 			steps: 3,
 			interval: 3
@@ -216,15 +216,15 @@ var app = {
 
 		/*
 		cordova.plugins.radar.startTrackingCustom({
-		  desiredStoppedUpdateInterval: 180,
-		  desiredMovingUpdateInterval: 60,
-		  desiredSyncInterval: 50,
-		  desiredAccuracy: 'high',
-		  stopDuration: 140,
-		  stopDistance: 70,
-		  sync: 'all',
-		  replay: 'none',
-		  showBlueBar: true
+			desiredStoppedUpdateInterval: 180,
+			desiredMovingUpdateInterval: 60,
+			desiredSyncInterval: 50,
+			desiredAccuracy: 'high',
+			stopDuration: 140,
+			stopDistance: 70,
+			sync: 'all',
+			replay: 'none',
+			showBlueBar: true
 		});
 
 		setTimeout(() => {
@@ -245,7 +245,7 @@ var app = {
 					longitude: -73.98670
 				},
 				{
-				  latitude: 40.73237,
+					latitude: 40.73237,
 					longitude: -73.94884
 				}
 			],
@@ -255,23 +255,23 @@ var app = {
 			this.log("getMatrix: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.autocomplete({
-      query: 'brooklyn roasting',
-      near: {
-        'latitude': 40.783826,
-        'longitude': -73.975363,
-      },
-      limit: 10,
-      layers: ['address', 'street'],
-      country: 'US'
-    }, (result) => {
+			query: 'brooklyn roasting',
+			near: {
+				'latitude': 40.783826,
+				'longitude': -73.975363,
+			},
+			limit: 10,
+			layers: ['address', 'street'],
+			country: 'US'
+		}, (result) => {
 			this.log("autocomplete: " + JSON.stringify(result));
-    });		
+		});
 		cordova.plugins.radar.sendEvent({
-      customType: "in_app_purchase",
-      metadata: {"price": "150USD"}
-    }, (result) => {
+			customType: "in_app_purchase",
+			metadata: { "price": "150USD" }
+		}, (result) => {
 			this.log("sendEvent: " + JSON.stringify(result));
-		});		
+		});
 	},
 
 };
