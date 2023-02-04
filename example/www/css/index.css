@@ -33,3 +33,7 @@ body {
     text-transform:uppercase;
     width:100%;
 }
+
+#console {
+    width: 100%;
+}

@@ -3,21 +3,45 @@ const cordova = require('cordova');
 const exec = (action, args, callback) => {
   cordova.exec(callback,
     (err) => {
-      console.log(err);
+      console.error(err, action, args);
     }, 'Radar', action, args);
 };
+
+const initialize = (publishableKey) => {
+  exec('initialize', [publishableKey]);
+}
 
 const setUserId = (userId) => {
   exec('setUserId', [userId]);
 };
 
+const getUserId = (callback) => {
+  exec("getUserId", null, callback)
+}
+
 const setDescription = (description) => {
   exec('setDescription', [description]);
 };
 
+const getDescription = (callback) => {
+  exec("getDescription", null, callback);
+}
+
 const setMetadata = (metadata) => {
   exec('setMetadata', [metadata]);
 };
+
+const getMetadata = (callback) => {
+  exec('getMetadata', null, callback);
+};
+
+const setAnonymousTrackingEnabled = (enabled) => {
+  exec('setAnonymousTrackingEnabled', [enabled]);
+}
+
+const setAdIdEnabled = (enabled) => {
+  exec('setAdIdEnabled', [enabled]);
+}
 
 const getPermissionsStatus = (callback) => {
   exec('getPermissionsStatus', null, callback);
@@ -27,8 +51,8 @@ const requestPermissions = (background) => {
   exec('requestPermissions', [background]);
 };
 
-const getLocation = (callback) => {
-  exec('getLocation', null, callback);
+const getLocation = (desiredAccuracy, callback) => {
+  exec('getLocation', [desiredAccuracy], callback);
 };
 
 const trackOnce = (arg1, arg2) => {
@@ -62,6 +86,14 @@ const mockTracking = (options, callback) => {
 const stopTracking = () => {
   exec('stopTracking');
 };
+
+const isTracking = (callback) => {
+  exec('isTracking', null, callback);
+}
+
+const getTrackingOptions = (callback) => {
+  exec('getTrackingOptions', null, callback);
+}
 
 const onEvents = (callback) => {
   exec('onEvents', null, (data) => {
@@ -175,10 +207,20 @@ const setLogLevel = (logLevel) => {
   exec('setLogLevel', [logLevel]);
 };
 
+const sendEvent = (options, callback) => {
+  exec('sendEvent', [options], callback);
+}
+
 const Radar = {
+  initialize,
   setUserId,
+  getUserId,
   setDescription,
+  getDescription,
   setMetadata,
+  getMetadata,
+  setAnonymousTrackingEnabled,
+  setAdIdEnabled,
   getPermissionsStatus,
   requestPermissions,
   getLocation,
@@ -189,6 +231,8 @@ const Radar = {
   startTrackingCustom,
   mockTracking,
   stopTracking,
+  isTracking,
+  getTrackingOptions,
   onEvents,
   onLocation,
   onClientLocation,
@@ -212,7 +256,8 @@ const Radar = {
   getDistance,
   getMatrix,
   setForegroundServiceOptions,
-  setLogLevel
+  setLogLevel,
+  sendEvent
 };
 
 module.exports = Radar;

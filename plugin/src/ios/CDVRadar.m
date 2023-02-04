@@ -69,6 +69,15 @@
 
 }
 
+- (void)initialize:(CDVInvokedUrlCommand *)command {
+    NSString *publishableKey = [command.arguments objectAtIndex:0];
+
+    [Radar initializeWithPublishableKey:publishableKey];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)setUserId:(CDVInvokedUrlCommand *)command {
     NSString *userId = [command.arguments objectAtIndex:0];
 
@@ -78,20 +87,36 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)getUserId:(CDVInvokedUrlCommand *)command {
+    NSString *userId = [Radar getUserId];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:userId];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)setLogLevel:(CDVInvokedUrlCommand *)command {
     NSString *level = [command.arguments objectAtIndex:0];
 
     RadarLogLevel logLevel = RadarLogLevelNone;
     if (level) {
-        if ([level isEqualToString:@"error"] || [level isEqualToString:@"ERROR"]) {
+        NSString *lowerLevel = [level lowercaseString];
+        if ([lowerLevel isEqualToString:@"error"]) {
             logLevel = RadarLogLevelError;
-        } else if ([level isEqualToString:@"warning"] || [level isEqualToString:@"WARNING"]) {
+        } else if ([lowerLevel isEqualToString:@"warning"]) {
             logLevel = RadarLogLevelWarning;
-        } else if ([level isEqualToString:@"info"] || [level isEqualToString:@"INFO"]) {
+        } else if ([lowerLevel isEqualToString:@"info"]) {
             logLevel = RadarLogLevelInfo;
-        } else if ([level isEqualToString:@"debug"] || [level isEqualToString:@"DEBUG"]) {
+        } else if ([lowerLevel isEqualToString:@"debug"]) {
             logLevel = RadarLogLevelDebug;
+        } else {            
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"invalid level"];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];            
+            return;
         }
+    } else {         
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"level is required"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];            
+        return;
     }
     [Radar setLogLevel:logLevel];
 
@@ -108,10 +133,46 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)getDescription:(CDVInvokedUrlCommand *)command {
+    NSString *description = [Radar getDescription];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:description];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)setMetadata:(CDVInvokedUrlCommand *)command {
     NSDictionary *metadata = [command.arguments objectAtIndex:0];
 
     [Radar setMetadata:metadata];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)getMetadata:(CDVInvokedUrlCommand *)command {
+    NSDictionary *metadata = [Radar getMetadata];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:metadata];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)setAnonymousTrackingEnabled:(CDVInvokedUrlCommand *)command {
+    NSNumber *enabledNumber = [command.arguments objectAtIndex:0];
+
+    BOOL enabled = [enabledNumber boolValue];
+
+    [Radar setAnonymousTrackingEnabled:enabled];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)setAdIdEnabled:(CDVInvokedUrlCommand *)command {
+    NSNumber *enabledNumber = [command.arguments objectAtIndex:0];
+
+    BOOL enabled = [enabledNumber boolValue];
+
+    [Radar setAdIdEnabled:enabled];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -158,8 +219,25 @@
 }
 
 - (void)getLocation:(CDVInvokedUrlCommand *)command {
+    NSString *desiredAccuracy = [command.arguments objectAtIndex:0];
+    RadarTrackingOptionsDesiredAccuracy accuracy = RadarTrackingOptionsDesiredAccuracyMedium;
+    
+    if (desiredAccuracy) {
+        NSString *lowerAccuracy = [desiredAccuracy lowercaseString];
+        if ([lowerAccuracy isEqualToString:@"high"]) {
+            accuracy = RadarTrackingOptionsDesiredAccuracyHigh;
+        } else if ([lowerAccuracy isEqualToString:@"medium"]) {
+            accuracy = RadarTrackingOptionsDesiredAccuracyMedium;
+        } else if ([lowerAccuracy isEqualToString:@"low"]) {
+            accuracy = RadarTrackingOptionsDesiredAccuracyLow;
+        } else {            
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"invalid desiredAccuracy"];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];            
+            return;
+        }
+    }
     [self.commandDelegate runInBackground:^{
-        [Radar getLocationWithCompletionHandler:^(RadarStatus status, CLLocation *location, BOOL stopped) {
+        [Radar getLocationWithDesiredAccuracy:accuracy completionHandler:^(RadarStatus status, CLLocation *location, BOOL stopped) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
             if (location) {
@@ -209,12 +287,17 @@
             }
             NSString *desiredAccuracyStr = optionsDict[@"desiredAccuracy"];
             if (desiredAccuracyStr && [desiredAccuracyStr isKindOfClass:[NSString class]]) {
-                if ([desiredAccuracyStr isEqualToString:@"high"] || [desiredAccuracyStr isEqualToString:@"HIGH"]) {
+                NSString *lowerAccuracy = [desiredAccuracyStr lowercaseString];
+                if ([lowerAccuracy isEqualToString:@"high"]) {
                     desiredAccuracy = RadarTrackingOptionsDesiredAccuracyHigh;
-                } else if ([desiredAccuracyStr isEqualToString:@"medium"] || [desiredAccuracyStr isEqualToString:@"MEDIUM"]) {
+                } else if ([lowerAccuracy isEqualToString:@"medium"]) {
                     desiredAccuracy = RadarTrackingOptionsDesiredAccuracyMedium;
-                } else if ([desiredAccuracyStr isEqualToString:@"low"] || [desiredAccuracyStr isEqualToString:@"LOW"]) {
+                } else if ([lowerAccuracy isEqualToString:@"low"]) {
                     desiredAccuracy = RadarTrackingOptionsDesiredAccuracyLow;
+                } else {            
+                    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"invalid desiredAccuracy"];
+                    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];            
+                    return;
                 }
             }
             NSNumber *beaconsNum = optionsDict[@"beacons"];
@@ -334,6 +417,18 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)isTracking:(CDVInvokedUrlCommand *)command {
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[Radar isTracking]];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)getTrackingOptions:(CDVInvokedUrlCommand *)command {
+    RadarTrackingOptions* options = [Radar getTrackingOptions];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[options dictionaryValue]];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)onEvents:(CDVInvokedUrlCommand *)command {
     eventsCallbackId = command.callbackId;
 }
@@ -385,8 +480,18 @@
 - (void)startTrip:(CDVInvokedUrlCommand *)command {
     NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
 
-    RadarTripOptions *options = [RadarTripOptions tripOptionsFromDictionary:optionsDict];
-    [Radar startTripWithOptions:options completionHandler:^(RadarStatus status, RadarTrip * _Nullable trip, NSArray<RadarEvent *> * _Nullable events) {
+    NSDictionary *tripOptionsDict = optionsDict[@"tripOptions"];
+    if (tripOptionsDict == nil) {
+        tripOptionsDict = optionsDict;
+    }
+    RadarTripOptions *tripOptions = [RadarTripOptions tripOptionsFromDictionary:tripOptionsDict];
+    NSDictionary *trackingOptionsDict = optionsDict[@"trackingOptions"];
+    RadarTrackingOptions *trackingOptions;
+    if (trackingOptionsDict) {
+        trackingOptions = [RadarTrackingOptions trackingOptionsFromDictionary:trackingOptionsDict];
+    }
+
+    [Radar startTripWithOptions:tripOptions trackingOptions:trackingOptions completionHandler:^(RadarStatus status, RadarTrip * _Nullable trip, NSArray<RadarEvent *> * _Nullable events) {
         NSMutableDictionary *dict = [NSMutableDictionary new];
         [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
         
@@ -539,7 +644,8 @@
         } else {
             radius = 1000;
         }
-        NSArray *chains = optionsDict[@"chains"];
+        NSArray *chains = optionsDict[@"chains"];        
+        NSDictionary *chainMetadata = optionsDict[@"chainMetadata"];
         NSArray *categories = optionsDict[@"categories"];
         NSArray *groups = optionsDict[@"groups"];
         NSNumber *limitNumber = optionsDict[@"limit"];
@@ -551,9 +657,9 @@
         }
 
         if (near) {
-            [Radar searchPlacesNear:near radius:radius chains:chains categories:categories groups:groups limit:limit completionHandler:completionHandler];
+            [Radar searchPlacesNear:near radius:radius chains:chains chainMetadata:chainMetadata categories:categories groups:groups limit:limit completionHandler:completionHandler];
         } else {
-            [Radar searchPlacesWithRadius:radius chains:chains categories:categories groups:groups limit:limit completionHandler:completionHandler];
+            [Radar searchPlacesWithRadius:radius chains:chains chainMetadata:chainMetadata categories:categories groups:groups limit:limit completionHandler:completionHandler];
         }
     }];
 }
@@ -630,9 +736,11 @@
             limit = [limitNumber intValue];
         } else {
             limit = 10;
-        }
+        }        
+        NSArray *layers = optionsDict[@"layers"];
+        NSString *country = optionsDict[@"country"];
 
-        [Radar autocompleteQuery:query near:near limit:limit completionHandler:^(RadarStatus status, NSArray<RadarAddress *> * _Nullable addresses) {
+        [Radar autocompleteQuery:query near:near layers:layers limit:limit country:country completionHandler:^(RadarStatus status, NSArray<RadarAddress *> * _Nullable addresses) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
             if (addresses) {
@@ -831,4 +939,28 @@
     }];
 }
 
+- (void)sendEvent:(CDVInvokedUrlCommand *)command {
+    [self.commandDelegate runInBackground:^{
+        NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
+        NSString *customType = optionsDict[@"customType"];
+        NSDictionary *metadata = optionsDict[@"metadata"];
+
+        [Radar sendEvent:customType withMetadata:metadata completionHandler:^(RadarStatus status, CLLocation *location, NSArray<RadarEvent *> *events, RadarUser *user) {
+            NSMutableDictionary *dict = [NSMutableDictionary new];
+            [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
+            if (location) {
+                [dict setObject:[Radar dictionaryForLocation:location] forKey:@"location"];
+            }
+            if (events) {
+                [dict setObject:[RadarEvent arrayForEvents:events] forKey:@"events"];
+            }
+            if (user) {
+                [dict setObject:[user dictionaryValue] forKey:@"user"];
+            }
+
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }];
+    }];
+}
 @end

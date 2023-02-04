@@ -9,11 +9,7 @@
   "cordova": {
     "plugins": {
       "@radarlabs/cordova-plugin-radar": {},
-      "cordova-plugin-radar": {
-        "NS_LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION": "This app uses your location for geofencing.",
-        "NS_LOCATION_ALWAYS_AND_WHEN_IN_USE_USAGE_DESCRIPTION": "This app uses your location for geofencing.",
-        "NS_LOCATION_ALWAYS_USAGE_DESCRIPTION": "This app uses your location for geofencing."
-      }
+      "cordova-plugin-radar": {}
     },
     "platforms": [
       "ios",
