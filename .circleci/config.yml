@@ -22,7 +22,7 @@ jobs:
       - run: cd plugin && npm install
       - run: cd plugin && sudo npm install -g cordova
       - run: cd example && npm install
-      - run: sudo chown -R 502:20 "/Users/distiller/cordova-plugin-radar/plugin/.config"
+      # - run: sudo chown -R 502:20 "/Users/distiller/.config"
       - run: cd example && cordova platform add ios
       - run: cd example && cordova plugin add ../plugin
       - run: cd example && cordova build
