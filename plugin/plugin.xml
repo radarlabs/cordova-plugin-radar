@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
         id="cordova-plugin-radar"
-        version="3.5.0">
+        version="3.5.1">
     <name>Radar</name>
     <js-module src="www/Radar.js" name="Radar">
         <clobbers target="cordova.plugins.radar"/>
@@ -54,6 +54,10 @@
 
         <header-file src="src/ios/CDVRadar.h"/>
         <source-file src="src/ios/CDVRadar.m"/>
-        <framework src="RadarSDK" type="podspec" spec="3.5.9"/>
+        <podspec>
+            <pods use-frameworks="true">
+                <pod name="RadarSDK" spec="3.5.9"/>
+            </pods>
+        </podspec>
     </platform>
 </plugin>
