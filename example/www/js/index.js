@@ -36,7 +36,6 @@ var app = {
 		cordova.plugins.radar.setMetadata({
 			foo: 'bar',
 		});
-		cordova.plugins.radar.setAdIdEnabled(false);
 		cordova.plugins.radar.setAnonymousTrackingEnabled(false);
 
 		cordova.plugins.radar.getLocation('low', (result) => {
@@ -50,6 +49,15 @@ var app = {
 		});
 		cordova.plugins.radar.getMetadata((result) => {
 			this.log("getMetadata: " + JSON.stringify(result));
+		});
+		cordova.plugins.radar.getHost((result) => {
+			this.log("getHost: " + JSON.stringify(result));
+		});
+		cordova.plugins.radar.getPublishableKey((result) => {
+			this.log("getPublishableKey: " + JSON.stringify(result));
+		});
+		cordova.plugins.radar.isUsingRemoteTrackingOptions((result) => {
+			this.log("isUsingRemoteTrackingOptions: " + JSON.stringify(result));
 		});
 		// cordova.plugins.radar.startTrackingContinuous();
 		// cordova.plugins.radar.stopTracking();

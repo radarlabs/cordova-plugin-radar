@@ -1064,4 +1064,26 @@
         }
     }];
 }
+
+- (void)getHost:(CDVInvokedUrlCommand *)command {
+    NSString *host = [RadarSettings host];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:host];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)getPublishableKey:(CDVInvokedUrlCommand *)command {
+    NSString *publishableKey = [RadarSettings publishableKey];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:publishableKey];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)isUsingRemoteTrackingOptions:(CDVInvokedUrlCommand *)command {
+    BOOL isUsingRemoteTrackingOptions = [Radar isUsingRemoteTrackingOptions];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:isUsingRemoteTrackingOptions];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 @end

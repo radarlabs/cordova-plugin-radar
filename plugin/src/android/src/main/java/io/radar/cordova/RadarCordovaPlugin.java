@@ -151,6 +151,12 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 setLogLevel(args, callbackContext);
             } else if (action.equals("logConversion")) {
                 logConversion(args, callbackContext);
+            } else if (action.equals("getHost")) {
+                getHost(args, callbackContext);
+            } else if (action.equals("getPublishableKey")) {
+                getPublishableKey(args, callbackContext);
+            } else if (action.equals("isUsingRemoteTrackingOptions")) {
+                isUsingRemoteTrackingOptions(args, callbackContext);
             } else {
                 return false;
             }
@@ -1273,5 +1279,23 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         } else {
             Radar.logConversion(name, metadata, callback);
         }
+    }
+
+    public void getHost(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        String host = Radar.getHost();
+        
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, host));
+    }
+
+    public void getPublishableKey(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        String publishableKey = Radar.getPublishableKey();
+        
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, publishableKey));
+    }
+
+    public void isUsingRemoteTrackingOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        boolean isUsingRemoteTrackingOptions = Radar.isUsingRemoteTrackingOptions();
+        
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, isUsingRemoteTrackingOptions));
     }
 }

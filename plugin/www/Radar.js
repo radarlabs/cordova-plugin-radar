@@ -229,7 +229,7 @@ const getMatrix = (options, callback) => {
   exec('getMatrix', [options], callback);
 };
 
-const setForegroundServiceOptions = (args, callback) => {
+const setForegroundServiceOptions = (options, callback) => {
   exec('setForegroundServiceOptions', [options], callback)
 };
 
@@ -240,6 +240,18 @@ const setLogLevel = (logLevel) => {
 const logConversion = (options, callback) => {
   exec('logConversion', [options], callback);
 };
+
+const getHost = (callback) => {
+  exec('getHost', callback);
+};
+
+const getPublishableKey = (callback) => {
+  exec('getPublishableKey', callback);
+};
+
+const isUsingRemoteTrackingOptions = (callback) => {
+  exec('isUsingRemoteTrackingOptions', callback);
+}
 
 const Radar = {
   initialize,
@@ -291,7 +303,10 @@ const Radar = {
   getMatrix,
   setForegroundServiceOptions,
   setLogLevel,
-  logConversion
+  logConversion,
+  getHost,
+  getPublishableKey,
+  isUsingRemoteTrackingOptions
 };
 
 module.exports = Radar;
