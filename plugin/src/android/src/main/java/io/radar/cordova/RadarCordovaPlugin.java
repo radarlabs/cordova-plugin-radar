@@ -29,6 +29,7 @@ import io.radar.sdk.RadarReceiver;
 import io.radar.sdk.RadarVerifiedReceiver;
 import io.radar.sdk.RadarTrackingOptions;
 import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsForegroundService;
+import io.radar.sdk.RadarNotificationOptions;
 import io.radar.sdk.RadarTripOptions;
 import io.radar.sdk.model.RadarAddress;
 import io.radar.sdk.model.RadarContext;
