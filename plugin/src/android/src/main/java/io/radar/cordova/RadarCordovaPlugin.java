@@ -1317,15 +1317,9 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public void setNotificationOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         final JSONObject optionsObj = args.getJSONObject(0);
-
-        try {
-            RadarNotificationOptions options = RadarNotificationOptions.fromJson(optionsObj);
-            Radar.setNotificationOptions(options);
-            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
-        } catch (JSONException e) {
-            Log.e("RadarCordovaPlugin", "JSONException", e);
-            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
-        }
+        RadarNotificationOptions options = RadarNotificationOptions.fromJson(optionsObj);
+        Radar.setNotificationOptions(options);
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 
     public void logTermination(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
