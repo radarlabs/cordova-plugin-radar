@@ -1,6 +1,6 @@
 #import <Cordova/CDV.h>
 #import <RadarSDK/RadarSDK.h>
 
-@interface CDVRadar : CDVPlugin <RadarDelegate>
+@interface CDVRadar : CDVPlugin <RadarDelegate, RadarVerifiedDelegate>
 
 @end

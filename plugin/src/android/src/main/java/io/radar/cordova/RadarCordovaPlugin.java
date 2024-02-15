@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import io.radar.sdk.Radar;
 import io.radar.sdk.RadarReceiver;
+import io.radar.sdk.RadarVerifiedReceiver;
 import io.radar.sdk.RadarTrackingOptions;
 import io.radar.sdk.RadarTrackingOptions.RadarTrackingOptionsForegroundService;
 import io.radar.sdk.RadarTripOptions;
@@ -50,6 +51,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     private static CallbackContext locationCallbackContext;
     private static CallbackContext clientLocationCallbackContext;
     private static CallbackContext errorCallbackContext;
+    private static CallbackContext tokenCallbackContext;
 
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         try {
@@ -79,6 +81,10 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 getLocation(args, callbackContext);
             } else if (action.equals("trackOnce")) {
                 trackOnce(args, callbackContext);
+            } else if (action.equals("trackVerified")) {
+                trackVerified(args, callbackContext);
+            } else if (action.equals("trackVerifiedToken")) {
+                trackVerifiedToken(args, callbackContext);
             } else if (action.equals("startTrackingEfficient")) {
                 startTrackingEfficient(args, callbackContext);
             } else if (action.equals("startTrackingResponsive")) {
@@ -87,6 +93,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 startTrackingContinuous(args, callbackContext);
             } else if (action.equals("startTrackingCustom")) {
                 startTrackingCustom(args, callbackContext);
+            } else if (action.equals("startTrackingVerified")) {
+                startTrackingVerified(args, callbackContext);
             } else if (action.equals("mockTracking")) {
                 mockTracking(args, callbackContext);
             } else if (action.equals("stopTracking")) {
@@ -160,6 +168,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
         Radar.setReceiver(new RadarCordovaReceiver());
+        Radar.setVerifiedReceiver(new RadarCordovaVerifiedReceiver());
     }
 
     public static class RadarCordovaReceiver extends RadarReceiver {
@@ -249,6 +258,27 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
         }
 
+    }
+
+    public static class RadarCordovaVerifiedReceiver extends RadarVerifiedReceiver {
+        @Override
+        public void onTokenUpdated(Context context, String token) {
+            if (RadarCordovaPlugin.tokenCallbackContext == null) {
+                return;
+            }
+
+            try {
+                JSONObject obj = new JSONObject();
+                obj.put("token", token);
+
+                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
+                pluginResult.setKeepCallback(true);
+                RadarCordovaPlugin.tokenCallbackContext.sendPluginResult(pluginResult);
+            } catch (JSONException e) {
+                Log.e("RadarCordovaPlugin", "JSONException", e);
+                RadarCordovaPlugin.tokenCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+            }
+        }
     }
 
     private static String[] stringArrayForArray(JSONArray jsonArr) throws JSONException {
@@ -512,6 +542,50 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         }
     }
 
+    public void trackVerified(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        Radar.RadarTrackCallback callback = new Radar.RadarTrackCallback() {
+            @Override
+            public void onComplete(Radar.RadarStatus status, Location location, RadarEvent[] events, RadarUser user) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+                    if (events != null) {
+                        obj.put("events", RadarEvent.toJson(events));
+                    }
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
+            }
+        };
+
+        boolean beacons = false;
+        if (args != null && args.length() > 0) {
+            final JSONObject optionsObj = args.getJSONObject(0);
+            beacons = optionsObj.optBoolean("beacons", false);
+        }
+
+        Radar.trackVerified(beacons, callback);
+    }
+
+    public void trackVerifiedToken(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        Radar.RadarTrackTokenCallback callback = new Radar.RadarTrackTokenCallback() {
+            @Override
+            public void onComplete(final Radar.RadarStatus status, final String token) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", status.toString());
+                    obj.put("token", token);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
+                } catch (JSONException e) {
+                    Log.e("RadarCordovaPlugin", "JSONException", e);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                }
+            }
+        };
+    }
+
     public void startTrackingEfficient(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Radar.startTracking(RadarTrackingOptions.EFFICIENT);
 
@@ -536,6 +610,22 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         RadarTrackingOptions options = RadarTrackingOptions.fromJson(optionsObj);
         Radar.startTracking(options);
 
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+    }
+
+    public void startTrackingVerified(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        boolean token = false;
+        int interval = 1;
+        boolean beacons = false;
+
+        if (args != null && args.length() > 0) {
+            final JSONObject optionsObj = args.getJSONObject(0);
+            token = optionsObj.optBoolean("token", false);
+            interval = optionsObj.optInt("interval", 1);
+            beacons = optionsObj.optBoolean("beacons", false);
+        }
+
+        Radar.startTrackingVerified(token, interval, beacons);
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 
@@ -626,6 +716,10 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         RadarCordovaPlugin.errorCallbackContext = callbackContext;
     }
 
+    public void onToken(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        RadarCordovaPlugin.tokenCallbackContext = callbackContext;
+    }
+
     public void offEvents(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         RadarCordovaPlugin.eventsCallbackContext = null;
     }
@@ -640,6 +734,10 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public void offError(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         RadarCordovaPlugin.errorCallbackContext = null;
+    }
+
+    public void offToken(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        RadarCordovaPlugin.tokenCallbackContext = null;
     }
 
     public void getTripOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
