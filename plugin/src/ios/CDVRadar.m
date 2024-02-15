@@ -85,6 +85,9 @@
 
 - (void)initialize:(CDVInvokedUrlCommand *)command {
     NSString *publishableKey = [command.arguments objectAtIndex:0];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:@"Cordova" forKey:@"radar-xPlatformSDKType"];
+    [[NSUserDefaults standardUserDefaults] setObject:@"3.9.0" forKey:@"radar-xPlatformSDKVersion"];
 
     [Radar initializeWithPublishableKey:publishableKey];
 
@@ -1083,6 +1086,32 @@
     BOOL isUsingRemoteTrackingOptions = [Radar isUsingRemoteTrackingOptions];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:isUsingRemoteTrackingOptions];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)setNotificationOptions:(CDVInvokedUrlCommand *)command {
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)logTermination:(CDVInvokedUrlCommand *)command {
+    [Radar logTermination];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)logBackgrounding:(CDVInvokedUrlCommand *)command {
+    [Radar logBackgrounding];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)logResigningActive:(CDVInvokedUrlCommand *)command {
+    [Radar logResigningActive];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 

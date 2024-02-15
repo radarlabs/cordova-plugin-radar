@@ -2,6 +2,7 @@ package io.radar.cordova;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build;
 import android.util.Log;
@@ -157,6 +158,14 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 getPublishableKey(args, callbackContext);
             } else if (action.equals("isUsingRemoteTrackingOptions")) {
                 isUsingRemoteTrackingOptions(args, callbackContext);
+            } else if (action.equals("setNotificationOptions")) {
+                setNotificationOptions(args, callbackContext);
+            } else if (action.equals("logTermination")) {
+                logTermination(args, callbackContext);
+            } else if (action.equals("logBackgrounding")) {
+                logBackgrounding(args, callbackContext);
+            } else if (action.equals("logResigningActive")) {
+                logResigningActive(args, callbackContext);
             } else {
                 return false;
             }
@@ -319,7 +328,13 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public void initialize(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         final String publishableKey = args.getString(0);
-        Context context=this.cordova.getActivity().getApplicationContext(); 
+        Context context = this.cordova.getActivity().getApplicationContext();
+
+        SharedPreferences.Editor editor = context.getSharedPreferences("RadarSDK", Context.MODE_PRIVATE).edit();
+        editor.putString("x_platform_sdk_type", "Cordova");
+        editor.putString("x_platform_sdk_version", "3.9.0");
+        editor.apply();
+
         Radar.initialize(context, publishableKey);
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
@@ -1297,5 +1312,34 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         boolean isUsingRemoteTrackingOptions = Radar.isUsingRemoteTrackingOptions();
         
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, isUsingRemoteTrackingOptions));
+    }
+
+    public void setNotificationOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final JSONObject optionsObj = args.getJSONObject(0);
+
+        try {
+            RadarNotificationOptions options = RadarNotificationOptions.fromJson(optionsObj);
+            Radar.setNotificationOptions(options);
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+        } catch (JSONException e) {
+            Log.e("RadarCordovaPlugin", "JSONException", e);
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+        }
+    }
+
+    public void logTermination(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+    }
+
+    public void logBackgrounding(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        Radar.logBackgrounding();
+
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+    }
+
+    public void logResigningActive(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        Radar.logResigningActive();
+
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 }

@@ -251,7 +251,23 @@ const getPublishableKey = (callback) => {
 
 const isUsingRemoteTrackingOptions = (callback) => {
   exec('isUsingRemoteTrackingOptions', callback);
-}
+};
+
+const setNotificationOptions = (options) => {
+  exec('setNotificationOptions', [options]);
+};
+
+const logTermination = () => {
+  exec('logTermination');
+};
+
+const logBackgrounding = () => {
+  exec('logBackgrounding');
+};
+
+const logResigningActive = () => {
+  exec('logResigningActive');
+};
 
 const Radar = {
   initialize,
@@ -306,7 +322,11 @@ const Radar = {
   logConversion,
   getHost,
   getPublishableKey,
-  isUsingRemoteTrackingOptions
+  isUsingRemoteTrackingOptions,
+  setNotificationOptions, // Android only
+  logTermination, // iOS only
+  logBackgrounding,
+  logResigningActive
 };
 
 module.exports = Radar;
