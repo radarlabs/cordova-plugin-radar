@@ -1019,8 +1019,9 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         int limit = optionsObj.has("limit") ? optionsObj.getInt("limit") : 10;
         String country = optionsObj.getString("country");
         String[] layers = optionsObj.has("layers") ? RadarCordovaPlugin.stringArrayForArray(optionsObj.getJSONArray("layers")) : null;
+        boolean mailable = optionsObj.has("mailable") ? optionsObj.getBoolean("mailable") : false;
 
-        Radar.autocomplete(query, near, layers, limit, country, new Radar.RadarGeocodeCallback() {
+        Radar.autocomplete(query, near, layers, limit, country, true, mailable, new Radar.RadarGeocodeCallback() {
             @Override
             public void onComplete(Radar.RadarStatus status, RadarAddress[] addresses) {
                 try {

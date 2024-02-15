@@ -835,8 +835,13 @@
         }        
         NSArray *layers = optionsDict[@"layers"];
         NSString *country = optionsDict[@"country"];
+        BOOL mailable = false;
+        NSNumber *mailableNumber = optionsDict[@"mailable"];
+        if (mailableNumber != nil && [mailableNumber isKindOfClass:[NSNumber class]]) {
+            mailable = [mailableNumber boolValue]; 
+        }
 
-        [Radar autocompleteQuery:query near:near layers:layers limit:limit country:country completionHandler:^(RadarStatus status, NSArray<RadarAddress *> * _Nullable addresses) {
+        [Radar autocompleteQuery:query near:near layers:layers limit:limit country:country mailable:mailable completionHandler:^(RadarStatus status, NSArray<RadarAddress *> * _Nullable addresses) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
             if (addresses) {
