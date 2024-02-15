@@ -76,7 +76,7 @@
         return;
     }
 
-    NSDictionary *dict = @[@"token": token];
+    NSDictionary *dict = @{@"token": token};
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
     [pluginResult setKeepCallbackAsBool:YES];
@@ -176,17 +176,6 @@
     BOOL enabled = [enabledNumber boolValue];
 
     [Radar setAnonymousTrackingEnabled:enabled];
-
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void)setAdIdEnabled:(CDVInvokedUrlCommand *)command {
-    NSNumber *enabledNumber = [command.arguments objectAtIndex:0];
-
-    BOOL enabled = [enabledNumber boolValue];
-
-    [Radar setAdIdEnabled:enabled];
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -332,7 +321,8 @@
     [self.commandDelegate runInBackground:^{
         BOOL beacons = NO;
         if (command.arguments && command.arguments.count) {
-            NSNumber *beaconsNum = optionsDict[@"beacons"];
+            NSDictionary *argsDict = [command.arguments objectAtIndex:0];
+            NSNumber *beaconsNum = argsDict[@"beacons"];
             if (beaconsNum) {
                 beacons = [beaconsNum boolValue];
             }
@@ -364,7 +354,8 @@
     [self.commandDelegate runInBackground:^{
         BOOL beacons = NO;
         if (command.arguments && command.arguments.count) {
-            NSNumber *beaconsNum = optionsDict[@"beacons"];
+            NSDictionary *argsDict = [command.arguments objectAtIndex:0];
+            NSNumber *beaconsNum = argsDict[@"beacons"];
             if (beaconsNum) {
                 beacons = [beaconsNum boolValue];
             }
@@ -1044,28 +1035,28 @@
     }];
 }
 
-- (void)sendEvent:(CDVInvokedUrlCommand *)command {
+- (void)logConversion:(CDVInvokedUrlCommand *)command {
     [self.commandDelegate runInBackground:^{
         NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
-        NSString *customType = optionsDict[@"customType"];
+        NSString *name = optionsDict[@"name"];
         NSDictionary *metadata = optionsDict[@"metadata"];
+        NSNumber *revenue = optionsDict[@"revenue"];
 
-        [Radar sendEvent:customType withMetadata:metadata completionHandler:^(RadarStatus status, CLLocation *location, NSArray<RadarEvent *> *events, RadarUser *user) {
+        RadarLogConversionCompletionHandler completionHandler = ^(RadarStatus status, RadarEvent * _Nullable event) {
             NSMutableDictionary *dict = [NSMutableDictionary new];
             [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
-            if (location) {
-                [dict setObject:[Radar dictionaryForLocation:location] forKey:@"location"];
+            if (event) {
+                [dict setObject:[event dictionaryValue] forKey:@"event"];
             }
-            if (events) {
-                [dict setObject:[RadarEvent arrayForEvents:events] forKey:@"events"];
-            }
-            if (user) {
-                [dict setObject:[user dictionaryValue] forKey:@"user"];
-            }
-
             CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }];
+        };
+
+        if (revenue) {
+            [Radar logConversionWithName:name revenue:revenue metadata:metadata completionHandler:completionHandler];
+        } else {
+            [Radar logConversionWithName:name metadata:metadata completionHandler:completionHandler];
+        }
     }];
 }
 @end

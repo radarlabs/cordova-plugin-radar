@@ -237,8 +237,8 @@ const setLogLevel = (logLevel) => {
   exec('setLogLevel', [logLevel]);
 };
 
-const sendEvent = (options, callback) => {
-  exec('sendEvent', [options], callback);
+const logConversion = (options, callback) => {
+  exec('logConversion', [options], callback);
 };
 
 const Radar = {
@@ -250,7 +250,6 @@ const Radar = {
   setMetadata,
   getMetadata,
   setAnonymousTrackingEnabled,
-  setAdIdEnabled,
   getPermissionsStatus,
   requestPermissions,
   getLocation,
@@ -292,7 +291,7 @@ const Radar = {
   getMatrix,
   setForegroundServiceOptions,
   setLogLevel,
-  sendEvent
+  logConversion
 };
 
 module.exports = Radar;

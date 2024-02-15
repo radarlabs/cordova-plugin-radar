@@ -74,10 +74,17 @@ var app = {
 		cordova.plugins.radar.trackOnce({ desiredAccuracy: "medium", beacons: true }, (result) => {
 			this.log("trackOnce: " + JSON.stringify(result));
 		});
+		cordova.plugins.radar.trackVerified((result) => {
+			this.log("trackVerified: " + JSON.stringify(result));
+		});
+		cordova.plugins.radar.trackVerifiedToken((result) => {
+			this.log("trackVerifiedToken: " + JSON.stringify(result));
+		});
 		cordova.plugins.radar.isTracking((result) => {
 			this.log("isTracking: " + JSON.stringify(result));
 		})
 		cordova.plugins.radar.startTrackingContinuous();
+		cordova.plugins.radar.startTrackingVerified();
 		cordova.plugins.radar.getTrackingOptions((result) => {
 			this.log("getTrackingOptions: " + JSON.stringify(result));
 		});
@@ -266,11 +273,11 @@ var app = {
 		}, (result) => {
 			this.log("autocomplete: " + JSON.stringify(result));
 		});
-		cordova.plugins.radar.sendEvent({
-			customType: "in_app_purchase",
+		cordova.plugins.radar.logConversion({
+			name: "in_app_purchase",
 			metadata: { "price": "150USD" }
 		}, (result) => {
-			this.log("sendEvent: " + JSON.stringify(result));
+			this.log("logConversion: " + JSON.stringify(result));
 		});
 	},
 
