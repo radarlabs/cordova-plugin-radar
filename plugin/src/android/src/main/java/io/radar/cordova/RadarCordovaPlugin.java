@@ -111,6 +111,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 onClientLocation(args, callbackContext);
             } else if (action.equals("onError")) {
                 onError(args, callbackContext);
+            } else if (action.equals("onToken")) {
+                onToken(args, callbackContext);
             } else if (action.equals("offEvents")) {
                 offEvents(args, callbackContext);
             } else if (action.equals("offLocation")) {
@@ -119,6 +121,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
                 offClientLocation(args, callbackContext);
             } else if (action.equals("offError")) {
                 offError(args, callbackContext);
+            } else if (action.equals("offToken")) {
+                offToken(args, callbackContext);
             } else if (action.equals("getTripOptions")) {
                 getTripOptions(args, callbackContext);
             } else if (action.equals("startTrip")) {

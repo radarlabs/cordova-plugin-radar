@@ -20,6 +20,8 @@ var app = {
 	// Application Constructor
 	initialize: function () {
 		document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+		document.addEventListener('pause', cordova.plugins.radar.logResigningActive(), false);
+		// logBackgrounding() and logTermination() (iOS only) should be added to native callbacks 
 	},
 
 	log: function (newValue) {
@@ -59,6 +61,7 @@ var app = {
 		cordova.plugins.radar.isUsingRemoteTrackingOptions((result) => {
 			this.log("isUsingRemoteTrackingOptions: " + JSON.stringify(result));
 		});
+		cordova.plugins.radar.setNotificationOptions({ iconString: 'icon' });
 		// cordova.plugins.radar.startTrackingContinuous();
 		// cordova.plugins.radar.stopTracking();
 		/*
@@ -79,6 +82,9 @@ var app = {
 		cordova.plugins.radar.getPermissionsStatus((result) => {
 			this.log("getPermissionsStatus: " + JSON.stringify(result));
 		});
+		cordova.plugins.radar.onToken((result) => {
+			this.log("token: " + JSON.stringify(result));
+		})
 		cordova.plugins.radar.trackOnce({ desiredAccuracy: "medium", beacons: true }, (result) => {
 			this.log("trackOnce: " + JSON.stringify(result));
 		});
