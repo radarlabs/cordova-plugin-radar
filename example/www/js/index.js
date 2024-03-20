@@ -20,6 +20,8 @@ var app = {
 	// Application Constructor
 	initialize: function () {
 		document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+		document.addEventListener('pause', cordova.plugins.radar.logResigningActive(), false);
+		// logBackgrounding() and logTermination() (iOS only) should be added to native callbacks 
 	},
 
 	log: function (newValue) {
@@ -36,7 +38,6 @@ var app = {
 		cordova.plugins.radar.setMetadata({
 			foo: 'bar',
 		});
-		cordova.plugins.radar.setAdIdEnabled(false);
 		cordova.plugins.radar.setAnonymousTrackingEnabled(false);
 
 		cordova.plugins.radar.getLocation('low', (result) => {
@@ -51,6 +52,16 @@ var app = {
 		cordova.plugins.radar.getMetadata((result) => {
 			this.log("getMetadata: " + JSON.stringify(result));
 		});
+		cordova.plugins.radar.getHost((result) => {
+			this.log("getHost: " + JSON.stringify(result));
+		});
+		cordova.plugins.radar.getPublishableKey((result) => {
+			this.log("getPublishableKey: " + JSON.stringify(result));
+		});
+		cordova.plugins.radar.isUsingRemoteTrackingOptions((result) => {
+			this.log("isUsingRemoteTrackingOptions: " + JSON.stringify(result));
+		});
+		cordova.plugins.radar.setNotificationOptions({ iconString: 'icon' });
 		// cordova.plugins.radar.startTrackingContinuous();
 		// cordova.plugins.radar.stopTracking();
 		/*
@@ -71,13 +82,23 @@ var app = {
 		cordova.plugins.radar.getPermissionsStatus((result) => {
 			this.log("getPermissionsStatus: " + JSON.stringify(result));
 		});
+		cordova.plugins.radar.onToken((result) => {
+			this.log("token: " + JSON.stringify(result));
+		})
 		cordova.plugins.radar.trackOnce({ desiredAccuracy: "medium", beacons: true }, (result) => {
 			this.log("trackOnce: " + JSON.stringify(result));
+		});
+		cordova.plugins.radar.trackVerified((result) => {
+			this.log("trackVerified: " + JSON.stringify(result));
+		});
+		cordova.plugins.radar.trackVerifiedToken((result) => {
+			this.log("trackVerifiedToken: " + JSON.stringify(result));
 		});
 		cordova.plugins.radar.isTracking((result) => {
 			this.log("isTracking: " + JSON.stringify(result));
 		})
 		cordova.plugins.radar.startTrackingContinuous();
+		cordova.plugins.radar.startTrackingVerified();
 		cordova.plugins.radar.getTrackingOptions((result) => {
 			this.log("getTrackingOptions: " + JSON.stringify(result));
 		});
@@ -266,11 +287,11 @@ var app = {
 		}, (result) => {
 			this.log("autocomplete: " + JSON.stringify(result));
 		});
-		cordova.plugins.radar.sendEvent({
-			customType: "in_app_purchase",
+		cordova.plugins.radar.logConversion({
+			name: "in_app_purchase",
 			metadata: { "price": "150USD" }
 		}, (result) => {
-			this.log("sendEvent: " + JSON.stringify(result));
+			this.log("logConversion: " + JSON.stringify(result));
 		});
 	},
 
