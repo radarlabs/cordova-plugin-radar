@@ -337,7 +337,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
         SharedPreferences.Editor editor = context.getSharedPreferences("RadarSDK", Context.MODE_PRIVATE).edit();
         editor.putString("x_platform_sdk_type", "Cordova");
-        editor.putString("x_platform_sdk_version", "3.9.0");
+        editor.putString("x_platform_sdk_version", "3.9.1");
         editor.apply();
 
         Radar.initialize(context, publishableKey);

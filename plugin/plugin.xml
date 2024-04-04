@@ -26,7 +26,7 @@
         </config-file>
 
         <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java" target-dir="src/android/src/main/java/io/radar/cordova"/>
-        <framework src="io.radar:sdk:3.9.7"/>
+        <framework src="io.radar:sdk:3.9.8"/>
 
     </platform>
     <platform name="ios">

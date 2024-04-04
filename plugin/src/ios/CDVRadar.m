@@ -87,7 +87,7 @@
     NSString *publishableKey = [command.arguments objectAtIndex:0];
     
     [[NSUserDefaults standardUserDefaults] setObject:@"Cordova" forKey:@"radar-xPlatformSDKType"];
-    [[NSUserDefaults standardUserDefaults] setObject:@"3.9.0" forKey:@"radar-xPlatformSDKVersion"];
+    [[NSUserDefaults standardUserDefaults] setObject:@"3.9.1" forKey:@"radar-xPlatformSDKVersion"];
 
     [Radar initializeWithPublishableKey:publishableKey];
 
