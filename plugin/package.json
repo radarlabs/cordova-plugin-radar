@@ -3,7 +3,7 @@
   "description": "Cordova plugin for Radar, the leading geofencing and location tracking platform",
   "homepage": "https://radar.com",
   "license": "Apache-2.0",
-  "version": "3.9.0",
+  "version": "3.9.1",
   "main": "www/Radar.js",
   "devDependencies": {
     "babel-eslint": "^10.0.1",
